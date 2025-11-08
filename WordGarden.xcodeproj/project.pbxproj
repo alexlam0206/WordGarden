@@ -48,16 +48,6 @@
 			path = WordGarden;
 			sourceTree = "<group>";
 		};
-		E48FE71E2EBF81E800ED6338 /* WordGardenTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WordGardenTests;
-			sourceTree = "<group>";
-		};
-		E48FE7282EBF81E800ED6338 /* WordGardenUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WordGardenUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,8 +79,6 @@
 			isa = PBXGroup;
 			children = (
 				E48FE70C2EBF81E600ED6338 /* WordGarden */,
-				E48FE71E2EBF81E800ED6338 /* WordGardenTests */,
-				E48FE7282EBF81E800ED6338 /* WordGardenUITests */,
 				E48FE70B2EBF81E600ED6338 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -143,9 +131,6 @@
 			dependencies = (
 				E48FE71D2EBF81E800ED6338 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				E48FE71E2EBF81E800ED6338 /* WordGardenTests */,
-			);
 			name = WordGardenTests;
 			packageProductDependencies = (
 			);
@@ -165,9 +150,6 @@
 			);
 			dependencies = (
 				E48FE7272EBF81E800ED6338 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				E48FE7282EBF81E800ED6338 /* WordGardenUITests */,
 			);
 			name = WordGardenUITests;
 			packageProductDependencies = (
@@ -294,11 +276,14 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WordGarden/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WordGarden;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -328,11 +313,14 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WordGarden/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WordGarden;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

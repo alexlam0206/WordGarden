@@ -1,61 +1,145 @@
-//
-//  ContentView.swift
-//  WordGarden
-//
-//  Created by Alex Lam on 8/11/2025.
-//
+
 
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @StateObject private var wordStorage = WordStorage()
+    @State private var showingAddWordSheet = false
+    @State private var animatingWordId: UUID?
+    @State private var isEditing = false
+    @State private var selection = Set<UUID>()
+    @State private var showingDeleteConfirmation = false
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+        NavigationView {
+            ZStack(alignment: .bottomTrailing) {
+                List(selection: $selection) {
+                    ForEach($wordStorage.words) { $word in
+                        NavigationLink(destination: WordDetailView(word: $word)) {
+                            HStack {
+                                Text(word.text)
+                                Spacer()
+                                Text(plantGrowth(for: word.growthLevel))
+                                    .scaleEffect(animatingWordId == word.id ? 1.5 : 1.0)
+                                Button(action: {
+                                    withAnimation(.easeInOut(duration: 0.5)) {
+                                        word.water()
+                                        animatingWordId = word.id
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        withAnimation {
+                                            animatingWordId = nil
+                                        }
+                                    }
+                                }) {
+                                    Text("💧")
+                                }
+                            }
+                        }
+                    }
+                    .onDelete(perform: deleteWords)
+                }
+                .navigationTitle("WordGarden 🌿")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        if !wordStorage.words.isEmpty {
+                            Button(isEditing ? "Done" : "Edit") {
+                                isEditing.toggle()
+                                if !isEditing {
+                                    selection.removeAll()
+                                }
+                            }
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        if isEditing {
+                            Button("Delete", role: .destructive) {
+                                showingDeleteConfirmation = true
+                            }
+                            .disabled(selection.isEmpty)
+                        }
                     }
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+                .environment(\.editMode, .constant(isEditing ? EditMode.active : EditMode.inactive))
+                
+                // Floating Action Button
+                Button(action: {
+                    showingAddWordSheet = true
+                }) {
+                    Image(systemName: "plus")
+                        .font(.title.weight(.semibold))
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .clipShape(Circle())
+                        .shadow(radius: 4, x: 0, y: 4)
                 }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+                .padding()
             }
-        } detail: {
-            Text("Select an item")
+            .sheet(isPresented: $showingAddWordSheet) {
+                AddWordView(wordStorage: wordStorage)
+            }
+            .alert("Delete Words", isPresented: $showingDeleteConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    deleteSelectedWords()
+                }
+            } message: {
+                Text("Are you sure you want to delete the selected words?")
+            }
         }
     }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
+    private func deleteWords(at offsets: IndexSet) {
+        wordStorage.words.remove(atOffsets: offsets)
     }
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+    private func deleteSelectedWords() {
+        wordStorage.words.removeAll { selection.contains($0.id) }
+        selection.removeAll()
+        isEditing = false
+    }
+
+    private func plantGrowth(for level: Int) -> String {
+        switch level {
+        case 0: return "🌱"
+        case 1: return "🌿"
+        case 2: return "🌳"
+        case 3: return "🌳🌳"
+        case 4: return "🌳🌳🌳"
+        case 5: return "🌳🌳🌳🌳"
+        default: return "🌱"
         }
     }
 }
 
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+struct AddWordView: View {
+    @ObservedObject var wordStorage: WordStorage
+    @Environment(\.presentationMode) var presentationMode
+    @State private var text = ""
+    @State private var definition = ""
+    @State private var example = ""
+
+    var body: some View {
+        NavigationView {
+            Form {
+                TextField("Word", text: $text)
+                TextField("Definition (optional)", text: $definition)
+                TextField("Example Sentence(optional)", text: $example)
+            }
+            .navigationTitle("Add New Word")
+            .navigationBarItems(leading: Button("Cancel") {
+                presentationMode.wrappedValue.dismiss()
+            }, trailing: Button("Save") {
+                wordStorage.addWord(text: text, definition: definition, example: example)
+                presentationMode.wrappedValue.dismiss()
+            })
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }

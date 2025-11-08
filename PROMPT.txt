@@ -1,0 +1,129 @@
+I am building an iOS app called WordGarden in SwiftUI. It is a vocabulary learning app where each word is a plant. 
+DO NOT DELETE PROMPT.txt
+Features:
+- Main screen shows a scrollable list of words (plants). Each plant shows its growth stage with an emoji or image.
+- Tap a plant to view details: word, meaning, example sentence, and hear pronunciation.
+- Users can add new words with a form (fields: word, meaning, example sentence).
+- Words grow when reviewed daily; missed reviews cause plants to wilt.
+- Users can tap a "water" button to grow the plant.
+- Animate plants growing (scale or emoji changes).
+- Save all words, growth stages, and review info locally so progress persists across app launches.
+- Optional: small animation effect when watering.
+
+Please generate SwiftUI code that:
+1. Defines the data model for plants and words.
+2. Builds the main list of plants with growth stages.
+3. Adds a form to create new words.
+4. Implements growth/wilt logic.
+5. Implements saving and loading data locally.
+6. Includes basic animations for growth.
+
+Please include clear comments explaining the code so I can understand it as a beginner learning SwiftUI.
+
+
+Explain the code as comments so I can understand and learn from it.
+I will compile by myself.
+
+NO NEED TO REMARK Created by XXX for each file.
+
+---
+1 Layout
+
+Full-screen vertical layout (VStack)
+
+Background: soft gradient (e.g., light green → soft yellow) to feel like a garden sunrise.
+
+Top: App logo or plant emoji 🌱
+
+Middle: Illustrations or simple animated icons showing:
+
+Seed planted → Word added
+
+Watering → Growth
+
+Daily review → Plant grows
+
+Forgotten → Plant wilts
+
+Text captions under each illustration: short, friendly, beginner-friendly sentences
+
+2 Buttons
+
+Skip (top-right corner) → go straight to main app
+
+Next / Continue (bottom) → move through onboarding pages
+
+Optional “Get Started” on the last page → enter the app
+
+3 Page Structure (3–4 pages)
+
+Welcome Page
+
+Emoji or small plant icon
+
+Text: “Welcome to WordGarden! 🌱 Learn words by growing your garden.”
+
+Add Words Page
+
+Illustration of seed being planted
+
+Text: “Add new words to plant seeds in your garden.”
+
+Grow Plants Page
+
+Illustration of watering or growth
+
+Text: “Review words daily to help your plants grow strong!”
+
+Keep Growing Page (optional)
+
+Wilted vs healthy plants illustration
+
+Text: “Don’t forget to review—otherwise your plants might wilt!”
+
+4 Visual Style / Animation Ideas
+
+Simple animations:
+
+Fade in text/images
+
+Scale plants slightly when moving to next page
+
+Colors: soft, earthy tones (greens, yellows, browns)
+
+Fonts: rounded, friendly, readable (e.g., Inter or SF Rounded)
+
+Swipe gesture support to move between pages
+
+5️ SwiftUI Notes
+
+Use TabView with .tabViewStyle(.page) for paging effect.
+
+Use @State to track current page.
+
+Buttons trigger page change or completion.
+---
+API
+
+I am building an iOS app called WordGarden using SwiftUI. It is a vocabulary learning app where each word is represented as a plant. 
+
+I want to use the Free Dictionary API (https://dictionaryapi.dev/) to fetch:
+- Definitions
+- Example sentences
+- Pronunciation (optional)
+
+Requirements:
+1. SwiftUI code that fetches a word's definition and example from the Free Dictionary API.
+2. Display the word, its definition, and example in a WordDetailView.
+3. Handle loading and errors gracefully (show a spinner while loading, show message if not found).
+4. Integrate this WordDetailView with the main plant list, so tapping a plant opens the details view.
+5. Keep the code beginner-friendly with clear comments explaining each part.
+6. Use async/await for network calls (modern Swift).
+7. Optional: button to play pronunciation using AVSpeechSynthesizer.
+
+Please generate the full SwiftUI code for this feature, including the model structs for decoding the API response.
+
+
+Please generate full Swift/SwiftUI code for the service + model + view described above, with explanatory comments. Also include a brief usage example of how to integrate `WordDetailView` into a list of plants.
+
+Finally, mention any API‑usage considerations (rate limits, caching responses, offline fallback) that I should keep in mind for WordGarden.
