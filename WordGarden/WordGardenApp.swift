@@ -10,14 +10,24 @@ import SwiftUI
 
 @main
 struct WordGardenApp: App {
+    @StateObject private var authViewModel = AuthenticationViewModel()
+
+    init() {
+        NotificationManager.shared.requestAuthorization()
+        GoogleSignInManager.shared.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
             MainView()
+                .environmentObject(authViewModel)
         }
     }
 }
 
 struct MainView: View {
+    @EnvironmentObject var authViewModel: AuthenticationViewModel
+
     var body: some View {
         TabView {
             ContentView()
@@ -29,6 +39,8 @@ struct MainView: View {
                 .tabItem {
                     Label("Discover", systemImage: "sparkles")
                 }
+            
+
             
             SettingsView()
                 .tabItem {
