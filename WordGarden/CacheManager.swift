@@ -1,5 +1,6 @@
 
 import Foundation
+import UIKit // Import UIKit for UIImage
 
 class CacheManager {
     static let shared = CacheManager()
@@ -21,6 +22,21 @@ class CacheManager {
     func getCachedData(for key: String) -> Data? {
         let url = cacheDirectory.appendingPathComponent(key)
         return try? Data(contentsOf: url)
+    }
+
+    // New method to cache UIImage
+    func cacheImage(image: UIImage, for key: String) {
+        if let data = image.pngData() { // Use pngData for lossless compression
+            cache(data: data, for: key)
+        }
+    }
+
+    // New method to retrieve cached UIImage
+    func getCachedImage(for key: String) -> UIImage? {
+        if let data = getCachedData(for: key) {
+            return UIImage(data: data)
+        }
+        return nil
     }
 
     func clearCache() {

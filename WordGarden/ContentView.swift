@@ -3,9 +3,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var wordStorage = WordStorage()
+    @EnvironmentObject var wordStorage: WordStorage
     @State private var showingAddWordSheet = false
-    @State private var animatingWordId: UUID?
     @State private var isEditing = false
     @State private var selection = Set<UUID>()
     @State private var showingDeleteConfirmation = false
@@ -16,25 +15,7 @@ struct ContentView: View {
                 List(selection: $selection) {
                     ForEach($wordStorage.words) { $word in
                         NavigationLink(destination: WordDetailView(word: $word)) {
-                            HStack {
-                                Text(word.text)
-                                Spacer()
-                                Text(plantGrowth(for: word.growthLevel))
-                                    .scaleEffect(animatingWordId == word.id ? 1.5 : 1.0)
-                                Button(action: {
-                                    withAnimation(.easeInOut(duration: 0.5)) {
-                                        word.water()
-                                        animatingWordId = word.id
-                                    }
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                        withAnimation {
-                                            animatingWordId = nil
-                                        }
-                                    }
-                                }) {
-                                    Text("💧")
-                                }
-                            }
+                            Text(word.text)
                         }
                     }
                     .onDelete(perform: deleteWords)
@@ -45,9 +26,6 @@ struct ContentView: View {
                         if !wordStorage.words.isEmpty {
                             Button(isEditing ? "Done" : "Edit") {
                                 isEditing.toggle()
-                                if !isEditing {
-                                    selection.removeAll()
-                                }
                             }
                         }
                     }
@@ -99,18 +77,6 @@ struct ContentView: View {
         selection.removeAll()
         isEditing = false
     }
-
-    private func plantGrowth(for level: Int) -> String {
-        switch level {
-        case 0: return "🌱"
-        case 1: return "🌿"
-        case 2: return "🌳"
-        case 3: return "🌳🌳"
-        case 4: return "🌳🌳🌳"
-        case 5: return "🌳🌳🌳🌳"
-        default: return "🌱"
-        }
-    }
 }
 
 struct AddWordView: View {
@@ -132,6 +98,7 @@ struct AddWordView: View {
                 presentationMode.wrappedValue.dismiss()
             }, trailing: Button("Save") {
                 wordStorage.addWord(text: text, definition: definition, example: example)
+                wordStorage.addLogEntry("Added word: \(text)")
                 presentationMode.wrappedValue.dismiss()
             })
         }
@@ -141,5 +108,6 @@ struct AddWordView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(WordStorage())
     }
 }

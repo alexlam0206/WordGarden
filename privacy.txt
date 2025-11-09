@@ -1,0 +1,66 @@
+Privacy Policy
+
+Effective Date: 9 November, 2025
+
+WordGarden (“we,” “our,” or “us”) values your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and share information when you use our services, including login via Google Sign-In.
+
+1. Information We Collect
+
+When you use our services, we may collect:
+
+Account Information: Name, email address, profile picture, and other basic information provided by Google during sign-in.
+
+Usage Information: How you interact with our app or website, such as features used, session duration, and device type.
+
+Technical Information: IP address, browser type, operating system, and device identifiers.
+
+2. How We Use Your Information
+
+We use your information to:
+
+Provide and improve our services.
+
+Authenticate and manage your account.
+
+Communicate with you, including updates or support messages.
+
+Analyze app usage and enhance user experience.
+
+3. How We Share Your Information
+
+We do not sell or rent your personal information. We may share information with:
+
+Service Providers: Companies that help us operate or improve our services (e.g., hosting providers, analytics).
+
+Legal Requirements: When required by law or to protect our rights.
+
+4. Google Sign-In & Google Drive
+
+If you log in using Google Sign-In, Google may share your name, email, and profile picture with us. We use this information only to authenticate your account and provide our services.
+
+If you choose to back up your data to Google Drive, the app will upload a backup file containing your word list to your personal Google Drive account. The app only accesses the file it creates ("WordGarden Backup.json") and does not access, view, or modify any other files in your Google Drive. This backup is for your convenience and is subject to Google's Privacy Policy.
+
+5. Data Security
+
+We implement reasonable administrative, technical, and physical safeguards to protect your personal information. However, no system can be completely secure.
+
+6. Your Choices
+
+Account Management: You can update or delete your account in the app.
+
+Cookies & Tracking: You may manage cookies or opt-out of analytics tracking where applicable.
+
+Third-Party Services: You may manage permissions via your Google account settings.
+
+7. Children’s Privacy
+
+Our services are not intended for children under 13. We do not knowingly collect information from children.
+
+8. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time. We will notify you of significant changes via email or in-app notifications.
+
+9. Contact Us
+
+If you have questions about this Privacy Policy, contact us at:
+alexlamnok@proton.me

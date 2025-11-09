@@ -6,40 +6,51 @@ WordGarden is a delightful iOS vocabulary learning app built entirely with Swift
 
 - **Add & Grow Words**: Add new words to your garden. Each word starts as a seedling.
 - **Interactive Growth**: "Water" your plants by tapping a button. Reviewing your words helps them grow from a seedling 🌱 to a full-grown tree 🌳.
+- **Cloud Sync**: Sign in with your Google account to back up and sync your vocabulary and progress across devices using Firebase.
 - **API Integration**: Automatically fetches detailed definitions, examples, and phonetic spellings from the [Free Dictionary API](https://dictionaryapi.dev/).
-- **Manual Definitions**: If you prefer, you can add your own custom definitions for words. The app will prioritize your definition over the API.
-- **Local Persistence**: Your garden is saved locally, so your progress is always there when you return.
+- **Manual Definitions**: If you prefer, you can add your own custom definitions for words.
+- **Local-First Persistence**: Your garden is saved locally for offline access and synced to the cloud when you're connected.
 - **Caching**: API responses are cached to minimize network usage and provide a faster experience.
-- **Settings**: A dedicated settings page allows you to clear the word cache if needed.
+- **Settings**: A dedicated settings page allows you to manage your account, sync data, and clear the word cache.
 - **Text-to-Speech**: Hear the correct pronunciation of words with a simple tap.
 - **Modern SwiftUI**: Built using modern SwiftUI features like `async/await` for clean and efficient asynchronous code.
-
-## How to Build
-
-1.  Clone this repository to your local machine.
-2.  Open the `WordGarden.xcodeproj` file in Xcode.
-3.  Select a simulator or connect a physical iOS device.
-4.  Build and run the project (▶️).
-
-No API keys are required to run this project.
 
 ## Technologies Used
 
 - **UI Framework**: SwiftUI
 - **Language**: Swift
+- **Backend & Sync**: Firebase (Authentication, Firestore)
 - **Concurrency**: `async/await`
 - **Audio**: `AVFoundation` for text-to-speech.
-- **Data Handling**: `Codable` for JSON parsing from the API.
-- **Storage**: `UserDefaults` and file-based caching for local data persistence.
+- **Data Handling**: `Codable` for JSON parsing.
+- **Storage**: `UserDefaults` for local data persistence.
 
-## Code Structure
+## Dependencies
 
-- `WordGardenApp.swift`: The main entry point for the app.
-- `ContentView.swift`: The main view displaying the list of words (plants).
-- `WordDetailView.swift`: The view that shows the detailed definition of a word, either from a manual entry or the API.
-- `AddWordView.swift`: A sheet used to add new words to the garden.
-- `SettingsView.swift`: The settings page, currently with a "Clear Cache" option.
-- `DictionaryService.swift`: Handles all networking logic for fetching data from the Free Dictionary API.
-- `CacheManager.swift`: Manages the caching of API responses to the device's file system.
-- `Word.swift`: The data model for a single word.
-- `WordStorage.swift`: A class responsible for loading and saving the user's words.
+- **[Firebase](https://github.com/firebase/firebase-ios-sdk)**: Used for authentication, cloud database, and storage.
+- **[GoogleSignIn-iOS](https://github.com/google/GoogleSignIn-iOS)**: Used for authenticating users with their Google account via Firebase.
+
+## Cloud Sync with Firebase
+
+WordGarden now supports cloud backup and synchronization using Firebase. This allows users to sign in with their Google account and keep their vocabulary, progress, and settings synced across multiple devices.
+
+### Developer Setup
+
+To enable the Firebase integration in your local build, you will need to set up your own Firebase project.
+
+1.  **Create a Firebase Project:**
+    *   Go to the [Firebase Console](https://console.firebase.google.com/).
+    *   Create a new project and register an iOS app with the bundle ID `alexlam0206.WordGarden`.
+
+2.  **Enable Firebase Services:**
+    *   In the console, enable **Authentication** and add the **Google** sign-in provider.
+    *   Enable **Firestore** and create a database in production mode.
+    *   Enable **Cloud Storage** for future backup features.
+
+3.  **Add Configuration File:**
+    *   From your Firebase project settings, download the `GoogleService-Info.plist` file.
+    *   Place this file inside the `WordGarden/` directory in your Xcode project, ensuring it is included in the app target.
+
+4.  **Install Packages:**
+    *   In Xcode, go to **File > Add Packages...** and add the `firebase-ios-sdk` Swift package (`https://github.com/firebase/firebase-ios-sdk.git`).
+    *   Ensure the `FirebaseAuth`, `FirebaseFirestore`, and `FirebaseStorage` products are linked to the main `WordGarden` app target.

@@ -127,3 +127,5 @@ Please generate the full SwiftUI code for this feature, including the model stru
 Please generate full Swift/SwiftUI code for the service + model + view described above, with explanatory comments. Also include a brief usage example of how to integrate `WordDetailView` into a list of plants.
 
 Finally, mention any API‑usage considerations (rate limits, caching responses, offline fallback) that I should keep in mind for WordGarden.
+
+DO NOT DO UNESSCESSARY THINGS.
