@@ -7,6 +7,7 @@ struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var wordStorage: WordStorage
     @EnvironmentObject var treeService: TreeService // New: Inject TreeService
+    @EnvironmentObject var cloudSyncManager: CloudSyncManager
     @State private var gravatarImage: UIImage? = nil
     @State private var showingSignOutConfirmation = false
 
@@ -70,6 +71,11 @@ struct ProfileView: View {
             }
         }
         .padding()
+        .onAppear {
+            Task {
+                try? await cloudSyncManager.downloadAllData(wordStorage: wordStorage, treeService: treeService)
+            }
+        }
     }
 
     private func gravatarURL(for email: String) -> URL? {

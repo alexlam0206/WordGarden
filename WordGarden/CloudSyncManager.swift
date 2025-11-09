@@ -110,7 +110,7 @@ final class CloudSyncManager: ObservableObject {
         }
         for log in wordStorage.dailyLogs {
             let logDict = try log.asDictionary()
-            try await userRef.collection("logs/daily").document(log.id.uuidString).setData(logDict)
+            try await userRef.collection("dailyLogs").document(log.id.uuidString).setData(logDict)
         }
         for log in treeService.wateringLogs {
             let logDict = try log.asDictionary()
@@ -148,7 +148,7 @@ final class CloudSyncManager: ObservableObject {
         wordStorage.words = downloadedWords
 
         var downloadedDailyLogs: [DailyLog] = []
-        let dailyLogsSnapshot = try await userRef.collection("logs/daily").getDocuments()
+        let dailyLogsSnapshot = try await userRef.collection("dailyLogs").getDocuments()
         for document in dailyLogsSnapshot.documents {
             let log = try document.data(as: DailyLog.self)
             downloadedDailyLogs.append(log)
