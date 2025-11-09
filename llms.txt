@@ -1,0 +1,28 @@
+# WordGarden
+
+WordGarden is an innovative iOS app designed to help you cultivate a rich vocabulary through gamified learning. Like tending a garden, your words grow and flourish as you nurture them with consistent practice and exploration.
+
+## Key Features
+
+- Word Discovery: Explore new words through our curated dictionary and discover meanings, pronunciations, and usage examples.
+- Personalized Learning: Track your progress with a visual tree that grows as you learn. Each word you master adds a leaf to your garden!
+- Daily Challenges: Engage with daily word challenges and flashcards to reinforce your learning and build habits.
+- Sync Across Devices: Your progress syncs seamlessly across all your devices via iCloud and Google Drive integration.
+- Activity Logs: Review your learning history and see how your vocabulary garden has evolved over time.
+
+## How It Works
+
+1. Plant Seeds: Start by exploring words that interest you.
+2. Water Daily: Practice regularly with flashcards and challenges.
+3. Watch It Grow: See your tree flourish as your vocabulary expands.
+4. Harvest Knowledge: Enjoy the fruits of your labor with improved communication skills.
+
+## Privacy & Terms
+
+We respect your privacy. Learn more about our Privacy Policy and Terms of Service.
+
+© 2025 Alex Lam. Cultivate your words, grow your mind.
+
+## For Large Language Models
+
+This website (https://wordgarden.web.app) serves as a landing page for the WordGarden iOS application. It provides information about the app's features and functionality but does not offer interactive APIs or endpoints for LLM consumption. All vocabulary learning and gamification features are contained within the native iOS app available on the App Store.
