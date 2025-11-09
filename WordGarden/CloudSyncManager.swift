@@ -129,8 +129,9 @@ final class CloudSyncManager: ObservableObject {
         
         // Download single documents
         let document = try await userRef.getDocument()
-        if let treesGrown = document.get("treesGrown") as? Int {
-            treeService.treesGrown = treesGrown
+        if let cloudTreesGrown = document.get("treesGrown") as? Int {
+            // Merge by taking the higher value, ensuring local progress isn't lost.
+            treeService.treesGrown = max(treeService.treesGrown, cloudTreesGrown)
         }
         if let treeData = document.get("tree") as? [String: Any] {
             let jsonData = try JSONSerialization.data(withJSONObject: treeData)

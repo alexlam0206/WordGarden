@@ -1,5 +1,3 @@
-
-
 import Foundation
 import Combine
 
@@ -15,7 +13,7 @@ struct DailyLog: Codable, Identifiable {
     var logs: [String]
 }
 
-// Manages saving and loading words from iCloud Key-Value Storage.
+// Manages the storage of words and daily logs using UserDefaults.
 class WordStorage: ObservableObject {
     @Published var dailyLogs: [DailyLog] = [] {
         didSet {
@@ -37,7 +35,7 @@ class WordStorage: ObservableObject {
         cleanOldLogs()
     }
 
-    // Load words from local storage
+    // Loads words from UserDefaults.
     private static func loadWords() -> [Word] {
         if let data = UserDefaults.standard.data(forKey: "words") {
             if let decodedWords = try? JSONDecoder().decode([Word].self, from: data) {
@@ -47,7 +45,7 @@ class WordStorage: ObservableObject {
         return []
     }
 
-    // Load logs from local storage
+    // Loads daily logs from UserDefaults.
     private static func loadLogs() -> [DailyLog] {
         if let data = UserDefaults.standard.data(forKey: "dailyLogs") {
             if let decodedLogs = try? JSONDecoder().decode([DailyLog].self, from: data) {
@@ -57,63 +55,61 @@ class WordStorage: ObservableObject {
         return []
     }
 
-    // Save words to local storage
+    // Saves the current array of words to UserDefaults.
     private func saveWords() {
         if let encodedWords = try? JSONEncoder().encode(words) {
             UserDefaults.standard.set(encodedWords, forKey: "words")
         }
     }
 
-    // Save logs to local storage
+    // Saves the current array of daily logs to UserDefaults.
     private func saveLogs() {
         if let encodedLogs = try? JSONEncoder().encode(dailyLogs) {
             UserDefaults.standard.set(encodedLogs, forKey: "dailyLogs")
         }
     }
 
-    // Get or create today's log
-    private func getTodaysLog() -> DailyLog {
+    // Retrieves the index for today's log, creating a new log if one doesn't exist.
+    private func getTodaysLogIndex() -> Int {
         let today = Calendar.current.startOfDay(for: Date())
         if let index = dailyLogs.firstIndex(where: { Calendar.current.isDate($0.date, inSameDayAs: today) }) {
-            return dailyLogs[index]
+            return index
         } else {
             let newLog = DailyLog(date: today, logs: [])
             dailyLogs.append(newLog)
-            return newLog
+            return dailyLogs.count - 1
         }
     }
 
-    // Add log entry
+    // Adds a new string entry to the log for the current day.
     func addLogEntry(_ entry: String) {
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let timestamp = timeFormatter.string(from: Date())
         let entryWithTime = "[\(timestamp)] \(entry)"
-        var todaysLog = getTodaysLog()
-        todaysLog.logs.append(entryWithTime)
-        if let index = dailyLogs.firstIndex(where: { $0.id == todaysLog.id }) {
-            dailyLogs[index] = todaysLog
-        }
+        
+        let index = getTodaysLogIndex()
+        dailyLogs[index].logs.append(entryWithTime)
     }
 
-    // Clean logs older than 7 days
+    // Removes log entries that are older than seven days.
     private func cleanOldLogs() {
         let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
         dailyLogs = dailyLogs.filter { $0.date >= sevenDaysAgo }
     }
 
+    // Responds to changes in the ubiquitous key-value store.
     @objc private func ubiquitousKeyValueStoreDidChange(notification: Notification) {
-        // Reload data when iCloud changes
         self.words = WordStorage.loadWords()
     }
 
-    // Add a new word
+    // Adds a new Word object to the words array.
     func addWord(text: String, definition: String, example: String) {
         let newWord = Word(text: text, definition: definition, example: example)
         words.append(newWord)
     }
 
-    // Export data as JSON string
+    // Exports the current words array to a JSON string.
     func exportData() -> String? {
         if let data = try? JSONEncoder().encode(words) {
             return String(data: data, encoding: .utf8)
@@ -121,32 +117,31 @@ class WordStorage: ObservableObject {
         return nil
     }
 
-    // Import data from JSON string, merging with existing words and avoiding duplicates.
+    // Imports words from a JSON string, merging them with existing words while avoiding duplicates.
     func importData(json: String) -> Bool {
-        if let data = json.data(using: .utf8),
-           let importedWords = try? JSONDecoder().decode([Word].self, from: data) {
-
-            let existingWordTexts = Set(words.map { $0.text.lowercased() })
-
-            for word in importedWords {
-                if !existingWordTexts.contains(word.text.lowercased()) {
-                    words.append(word)
-                }
-            }
-
-            return true
+        guard let data = json.data(using: .utf8),
+              let importedWords = try? JSONDecoder().decode([Word].self, from: data) else {
+            return false
         }
-        return false
+
+        let existingWordTexts = Set(words.map { $0.text.lowercased() })
+
+        for word in importedWords {
+            if !existingWordTexts.contains(word.text.lowercased()) {
+                words.append(word)
+            }
+        }
+        return true
     }
 
-    // Generate flashcards for all words, using the first definition from the API if not manually set
+    // Generates flashcards for all words. If a definition is missing, it attempts to fetch one from the DictionaryService.
     func generateFlashcards() async -> [Flashcard] {
         let dictionaryService = DictionaryService()
         var flashcards: [Flashcard] = []
 
         for word in words {
             var definition = word.definition
-            if definition.isEmpty || definition == "Definition not available" { // Assuming placeholder
+            if definition.isEmpty {
                 do {
                     let entries = try await dictionaryService.fetchWord(word.text)
                     if let firstMeaning = entries.first?.meanings.first,
@@ -154,10 +149,11 @@ class WordStorage: ObservableObject {
                         definition = firstDef.definition
                     }
                 } catch {
-                    definition = "Definition not available"
+                    definition = "Definition not available."
                 }
             }
-            if definition != "Definition not available" && !definition.isEmpty {
+            
+            if !definition.isEmpty && definition != "Definition not available." {
                 flashcards.append(Flashcard(word: word.text, definition: definition))
             }
         }

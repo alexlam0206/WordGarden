@@ -1,10 +1,9 @@
-
 import Foundation
 import SwiftUI
 import Combine
 import FirebaseAuth
 
-// Manages the user's authentication state for the UI.
+// Manages the user's authentication state and provides methods for sign-in and sign-out.
 class AuthenticationViewModel: ObservableObject {
     @Published var user: User?
 
@@ -12,12 +11,12 @@ class AuthenticationViewModel: ObservableObject {
         checkSignInStatus()
     }
 
-    // Checks for a currently signed-in Firebase user.
+    // Checks the current authentication state of the user.
     func checkSignInStatus() {
         self.user = Auth.auth().currentUser
     }
 
-    // Starts the sign-in process via CloudSyncManager.
+    // Initiates the Google sign-in process.
     @MainActor
     func signIn() {
         Task {
@@ -25,12 +24,12 @@ class AuthenticationViewModel: ObservableObject {
                 try await CloudSyncManager.shared.signInWithGoogle()
                 self.user = Auth.auth().currentUser
             } catch {
-                print("Detailed sign-in error: \(error)")
+                print("Error signing in: \(error.localizedDescription)")
             }
         }
     }
 
-    // Signs the user out via CloudSyncManager.
+    // Signs the current user out.
     @MainActor
     func signOut() {
         do {

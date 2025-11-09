@@ -1,7 +1,7 @@
 
-
 import SwiftUI
 
+// The main view of the application, displaying the list of words.
 struct ContentView: View {
     @EnvironmentObject var wordStorage: WordStorage
     @State private var showingAddWordSheet = false
@@ -12,35 +12,20 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottomTrailing) {
-                List(selection: $selection) {
-                    ForEach($wordStorage.words) { $word in
-                        NavigationLink(destination: WordDetailView(word: $word)) {
-                            Text(word.text)
-                        }
-                    }
-                    .onDelete(perform: deleteWords)
-                }
-                .navigationTitle("WordGarden 🌿")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        if !wordStorage.words.isEmpty {
-                            Button(isEditing ? "Done" : "Edit") {
-                                isEditing.toggle()
+                if wordStorage.words.isEmpty {
+                    EmptyStateView()
+                } else {
+                    List(selection: $selection) {
+                        ForEach($wordStorage.words) { $word in
+                            NavigationLink(destination: WordDetailView(word: $word)) {
+                                WordRowView(word: word)
                             }
                         }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        if isEditing {
-                            Button("Delete", role: .destructive) {
-                                showingDeleteConfirmation = true
-                            }
-                            .disabled(selection.isEmpty)
-                        }
+                        .onDelete(perform: deleteWords)
                     }
                 }
-                .environment(\.editMode, .constant(isEditing ? EditMode.active : EditMode.inactive))
                 
-                // Floating Action Button
+                // Floating action button for adding a new word.
                 Button(action: {
                     showingAddWordSheet = true
                 }) {
@@ -54,6 +39,25 @@ struct ContentView: View {
                 }
                 .padding()
             }
+            .navigationTitle("WordGarden")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if !wordStorage.words.isEmpty {
+                        Button(isEditing ? "Done" : "Edit") {
+                            isEditing.toggle()
+                        }
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if isEditing {
+                        Button("Delete", role: .destructive) {
+                            showingDeleteConfirmation = true
+                        }
+                        .disabled(selection.isEmpty)
+                    }
+                }
+            }
+            .environment(\.editMode, .constant(isEditing ? EditMode.active : EditMode.inactive))
             .sheet(isPresented: $showingAddWordSheet) {
                 AddWordView(wordStorage: wordStorage)
             }
@@ -79,35 +83,18 @@ struct ContentView: View {
     }
 }
 
-struct AddWordView: View {
-    @ObservedObject var wordStorage: WordStorage
-    @Environment(\.presentationMode) var presentationMode
-    @State private var text = ""
-    @State private var definition = ""
-    @State private var example = ""
-
-    var body: some View {
-        NavigationView {
-            Form {
-                TextField("Word", text: $text)
-                TextField("Definition (optional)", text: $definition)
-                TextField("Example Sentence(optional)", text: $example)
-            }
-            .navigationTitle("Add New Word")
-            .navigationBarItems(leading: Button("Cancel") {
-                presentationMode.wrappedValue.dismiss()
-            }, trailing: Button("Save") {
-                wordStorage.addWord(text: text, definition: definition, example: example)
-                wordStorage.addLogEntry("Added word: \(text)")
-                presentationMode.wrappedValue.dismiss()
-            })
-        }
-    }
-}
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
+        // Preview with words
         ContentView()
             .environmentObject(WordStorage())
+
+        // Preview with empty state
+        let emptyStorage = WordStorage()
+        emptyStorage.words = []
+        return ContentView()
+            .environmentObject(emptyStorage)
+            .previewDisplayName("Empty State")
+
     }
 }

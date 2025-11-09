@@ -1,4 +1,7 @@
+// All changes after that commit have been discarded, and the working directory is now at that state.
 import SwiftUI
+
+// All changes after that commit have been discarded, and the working directory is now at that state.
 
 struct FlashcardsView: View {
     @EnvironmentObject var wordStorage: WordStorage

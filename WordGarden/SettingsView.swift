@@ -1,8 +1,11 @@
+// All changes after that commit have been discarded, and the working directory is now at that state.
 
 import SwiftUI
 import SafariServices
 import UniformTypeIdentifiers
 import CryptoKit
+
+// All changes after that commit have been discarded, and the working directory is now at that state.
 
 // Backup data structure
 struct BackupData: Codable {

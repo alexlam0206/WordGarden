@@ -1,6 +1,9 @@
+// All changes after that commit have been discarded, and the working directory is now at that state.
 
 import SwiftUI
 import Firebase
+
+// All changes after that commit have been discarded, and the working directory is now at that state.
 
 @main
 struct WordGardenApp: App {
