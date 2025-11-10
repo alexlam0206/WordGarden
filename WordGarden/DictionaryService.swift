@@ -1,19 +1,16 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
-
 import Foundation
 
 // MARK: - Welcome
 struct WelcomeElement: Codable, Identifiable {
     let id = UUID()
     let word: String
-    let phonetic: String?
     let phonetics: [Phonetic]
-    let meanings: [Meaning]
+    var meanings: [Meaning]
     let license: License
     let sourceUrls: [String]
 
     enum CodingKeys: String, CodingKey {
-        case word, phonetic, phonetics, meanings, license, sourceUrls
+        case word, phonetics, meanings, license, sourceUrls
     }
 }
 
@@ -27,7 +24,7 @@ struct License: Codable {
 struct Meaning: Codable, Identifiable {
     let id = UUID()
     let partOfSpeech: String
-    let definitions: [Definition]
+    var definitions: [Definition]
     let synonyms, antonyms: [String]
 
     enum CodingKeys: String, CodingKey {
@@ -38,7 +35,7 @@ struct Meaning: Codable, Identifiable {
 // MARK: - Definition
 struct Definition: Codable, Identifiable {
     let id = UUID()
-    let definition: String
+    var definition: String
     let synonyms, antonyms: [String]
     let example: String?
 

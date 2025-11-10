@@ -1,11 +1,7 @@
 import Foundation
 import Combine
 
-struct Flashcard: Identifiable {
-    let id = UUID()
-    let word: String
-    let definition: String
-}
+
 
 struct DailyLog: Codable, Identifiable {
     var id = UUID()
@@ -109,6 +105,13 @@ class WordStorage: ObservableObject {
         words.append(newWord)
     }
 
+    // Increases the growth level of a word by reviewing it.
+    func reviewWord(wordID: UUID) {
+        if let index = words.firstIndex(where: { $0.id == wordID }) {
+            words[index].growthLevel = min(words[index].growthLevel + 1, 5) // Max level 5
+        }
+    }
+
     // Exports the current words array to a JSON string.
     func exportData() -> String? {
         if let data = try? JSONEncoder().encode(words) {
@@ -134,19 +137,23 @@ class WordStorage: ObservableObject {
         return true
     }
 
-    // Generates flashcards for all words. If a definition is missing, it attempts to fetch one from the DictionaryService.
-    func generateFlashcards() async -> [Flashcard] {
+    // Generates words suitable for flashcards. If a definition is missing, it attempts to fetch one from the DictionaryService.
+    func generateWordsForFlashcards() async -> [Word] {
         let dictionaryService = DictionaryService()
-        var flashcards: [Flashcard] = []
+        var wordsForFlashcards: [Word] = []
 
-        for word in words {
+        for var word in words {
             var definition = word.definition
             if definition.isEmpty {
                 do {
                     let entries = try await dictionaryService.fetchWord(word.text)
                     if let firstMeaning = entries.first?.meanings.first,
-                       let firstDef = firstMeaning.definitions.first {
+                        let firstDef = firstMeaning.definitions.first {
                         definition = firstDef.definition
+                        // Update the word's definition in storage
+                        if let index = words.firstIndex(where: { $0.id == word.id }) {
+                            words[index].definition = definition
+                        }
                     }
                 } catch {
                     definition = "Definition not available."
@@ -154,10 +161,11 @@ class WordStorage: ObservableObject {
             }
             
             if !definition.isEmpty && definition != "Definition not available." {
-                flashcards.append(Flashcard(word: word.text, definition: definition))
+                word.definition = definition // Ensure definition is set
+                wordsForFlashcards.append(word)
             }
         }
 
-        return flashcards
+        return wordsForFlashcards
     }
 }

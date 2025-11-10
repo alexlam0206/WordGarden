@@ -1,5 +1,3 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
-
 import Foundation
 
 // Represents a single word in the user's garden.

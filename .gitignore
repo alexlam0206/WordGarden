@@ -1,6 +1,7 @@
 PROMPT.txt
 GEMINI.md
 STORAGE.md
+API_Usage_Considerations.md
 .gitignore
 opencode
 /firebase-app

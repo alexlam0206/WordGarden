@@ -1,10 +1,6 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
-
 import SwiftUI
 import FirebaseAuth
 import CryptoKit
-
-// All changes after that commit have been discarded, and the working directory is now at that state.
 
 struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthenticationViewModel

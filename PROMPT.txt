@@ -1,131 +1,146 @@
-I am building an iOS app called WordGarden in SwiftUI. It is a vocabulary learning app where each word is a plant. 
-DO NOT DELETE PROMPT.txt
+Plan
+🌱 WordGarden — Final App Plan (2026 Swift Student Challenge)
+💡 Concept
+
+Learn vocabulary like growing a garden.
+Each word is a seed — reviewing, pronouncing, and focusing makes it grow.
+Too much screen time or distraction? The plant wilts 🌿💧
+
+🧩 Core Features
+1. Word Growth System
+
+Words grow from seed → sprout → leaf → flower as user reviews.
+
+Each review increases “growth level”.
+
+Forgetting or not using words causes wilting.
+
+Local animation (SwiftUI Lottie-like hand-drawn growth transitions).
+
+2. Local Storage + backup cloud sync
+
+All user data stored via UserDefaults and serialized JSON.
+
+Uses CacheManager for definitions.
+
+Can export encrypted backup file.
+
+cloud sync by default.
+
+3. Screen Time Integration 
+
+Reads iOS Screen Time stats (or approximate via app open time).
+
+If too high, tree wilts or slows growth.
+
+Promotes focus and learning balance.
+
+4. AI Assistant for Words 
+
+Goal: Help the user learn more naturally with on-device or cloud AI.
+
+Options:
+
+Local AI (Offline): Use a small Core ML model for simple word explanations or grammar corrections.
+
+Google Gemini or OpenAI API (Optional):
+
+Let users bring their own API key (via settings).
+
 Features:
-- Main screen shows a scrollable list of words (plants). Each plant shows its growth stage with an emoji or image.
-- Tap a plant to view details: word, meaning, example sentence, and hear pronunciation.
-- Users can add new words with a form (fields: word, meaning, example sentence).
-- Words grow when reviewed daily; missed reviews cause plants to wilt.
-- Users can tap a "water" button to grow the plant.
-- Animate plants growing (scale or emoji changes).
-- Save all words, growth stages, and review info locally so progress persists across app launches.
-- Optional: small animation effect when watering.
 
-Please generate SwiftUI code that:
-1. Defines the data model for plants and words.
-2. Builds the main list of plants with growth stages.
-3. Adds a form to create new words.
-4. Implements growth/wilt logic.
-5. Implements saving and loading data locally.
-6. Includes basic animations for growth.
+Generate example sentences.
 
-Please include clear comments explaining the code so I can understand it as a beginner learning SwiftUI.
+Translate word into user’s native language.
 
+Suggest related vocabulary (“If you learn ‘plant’, also learn ‘seed’, ‘grow’, ‘root’…”).
 
-Explain the code as comments so I can understand and learn from it.
-I will compile by myself.
+Daily AI quiz: “Explain this word in your own words.”
 
-NO NEED TO REMARK Created by XXX for each file.
+💡 Gemini is great because of multimodal capability — later you can let users snap a photo and AI identifies the object → generates vocab word!
 
----
-1 Layout
+5. Firebase Integration
 
-Full-screen vertical layout (VStack)
+user logs in with Google:
 
-Background: soft gradient (e.g., light green → soft yellow) to feel like a garden sunrise.
+Sync data securely using Firebase Firestore.
 
-Top: App logo or plant emoji 🌱
+Backup trees, words, and progress.
 
-Middle: Illustrations or simple animated icons showing:
+Store AI-generated examples (if desired).
 
-Seed planted → Word added
+Optional global leaderboard: “Most Trees Grown 🌳”
 
-Watering → Growth
+Firebase also helps with:
 
-Daily review → Plant grows
+Cloud backup
 
-Forgotten → Plant wilts
+Push notifications for review reminders
 
-Text captions under each illustration: short, friendly, beginner-friendly sentences
+⚙️ Implementation: Store minimal JSON per user
+/users/{uid}/data → { words: […], tree: {...}, stats: {...} }
 
-2 Buttons
+6. Focus Mode (Optional Add-On ✈️)
 
-Skip (top-right corner) → go straight to main app
+“Focus Garden” → blocks distractions while studying.
 
-Next / Continue (bottom) → move through onboarding pages
+UI: peaceful background with soft wind & ambient nature sounds.
 
-Optional “Get Started” on the last page → enter the app
+“Focus View” can use a treehouse or garden window animation (like airplane window from Focus Flight).
 
-3 Page Structure (3–4 pages)
+If user leaves app early → flower droops.
 
-Welcome Page
+If completes focus session → flower blooms.
 
-Emoji or small plant icon
+7. Daily Word & Review Notifications
 
-Text: “Welcome to WordGarden! 🌱 Learn words by growing your garden.”
+Scheduled local notifications using UNUserNotificationCenter.
 
-Add Words Page
+Firebase Cloud Messaging (optional for logged-in users).
 
-Illustration of seed being planted
+Can include AI-generated quote or sentence of the day.
 
-Text: “Add new words to plant seeds in your garden.”
+8. Custom API Integration
 
-Grow Plants Page
+In Settings, user can enter:
 
-Illustration of watering or growth
+Gemini API key
 
-Text: “Review words daily to help your plants grow strong!”
+OpenAI API key
 
-Keep Growing Page (optional)
+Allows advanced users to unlock richer AI content without backend cost.
 
-Wilted vs healthy plants illustration
+🧠 AI Prompts Examples
+✨ Word Meaning
 
-Text: “Don’t forget to review—otherwise your plants might wilt!”
+“Explain the word ‘serendipity’ in a fun and simple way for a 13-year-old learner.”
 
-4 Visual Style / Animation Ideas
+📸 Photo Learning
 
-Simple animations:
+“You took a photo of [object]. Identify what it is, then teach one English word related to it with pronunciation and example sentence.”
 
-Fade in text/images
+🌿 Motivation
 
-Scale plants slightly when moving to next page
+“Write a short encouraging sentence as if you’re a talking plant that helps a learner grow.”
 
-Colors: soft, earthy tones (greens, yellows, browns)
+⚙️ Technical Plan Summary
+Component	Implementation	Notes
+UI	SwiftUI + custom drawing animations	Simple and beautiful
+Storage	UserDefaults (JSON)	Local, lightweight
+Cloud Sync	Firebase Firestore (optional)	Auto-sync if logged in
+AI	Gemini or OpenAI via user key	Safe and flexible
+Notifications	Local + Firebase (optional)	For reminders
+Focus Integration	Local focus timer	Links to growth logic
+Screen Time	Device stats or internal tracking	Motivational feedback
+🏆 Why This Can Win
 
-Fonts: rounded, friendly, readable (e.g., Inter or SF Rounded)
+Meaningful: Encourages learning and healthy habits
 
-Swipe gesture support to move between pages
+Beautiful: Nature-inspired animations and art
 
-5️ SwiftUI Notes
+Innovative: Combines AI + gamified growth + wellbeing
 
-Use TabView with .tabViewStyle(.page) for paging effect.
+Flexible: Works offline, but shines online
 
-Use @State to track current page.
-
-Buttons trigger page change or completion.
----
-API
-
-I am building an iOS app called WordGarden using SwiftUI. It is a vocabulary learning app where each word is represented as a plant. 
-
-I want to use the Free Dictionary API (https://dictionaryapi.dev/) to fetch:
-- Definitions
-- Example sentences
-- Pronunciation (optional)
-
-Requirements:
-1. SwiftUI code that fetches a word's definition and example from the Free Dictionary API.
-2. Display the word, its definition, and example in a WordDetailView.
-3. Handle loading and errors gracefully (show a spinner while loading, show message if not found).
-4. Integrate this WordDetailView with the main plant list, so tapping a plant opens the details view.
-5. Keep the code beginner-friendly with clear comments explaining each part.
-6. Use async/await for network calls (modern Swift).
-7. Optional: button to play pronunciation using AVSpeechSynthesizer.
-
-Please generate the full SwiftUI code for this feature, including the model structs for decoding the API response.
-
-
-Please generate full Swift/SwiftUI code for the service + model + view described above, with explanatory comments. Also include a brief usage example of how to integrate `WordDetailView` into a list of plants.
-
-Finally, mention any API‑usage considerations (rate limits, caching responses, offline fallback) that I should keep in mind for WordGarden.
-
+Personal: Learners literally “grow” their words
 DO NOT DO UNESSCESSARY THINGS.

@@ -1,12 +1,9 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
 import SwiftUI
-
-// All changes after that commit have been discarded, and the working directory is now at that state.
 
 struct FlashcardsView: View {
     @EnvironmentObject var wordStorage: WordStorage
     @EnvironmentObject var treeService: TreeService
-    @State private var flashcards: [Flashcard] = []
+    @State private var wordsForFlashcards: [Word] = []
     @State private var currentIndex = 0
     @State private var showDefinition = false
     @State private var isLoading = false
@@ -16,7 +13,7 @@ struct FlashcardsView: View {
         VStack {
             if isLoading {
                 ProgressView("Loading flashcards...")
-            } else if flashcards.isEmpty {
+            } else if wordsForFlashcards.isEmpty {
                 Text("No words available for flashcards. Add some words first.")
                     .padding()
             } else {
@@ -39,7 +36,7 @@ struct FlashcardsView: View {
                             Text("Definition")
                                 .font(.headline)
                                 .foregroundColor(.secondary)
-                            Text(flashcards[currentIndex].definition)
+                            Text(wordsForFlashcards[currentIndex].definition)
                                 .font(.title2)
                                 .padding(.horizontal)
                                 .multilineTextAlignment(.center)
@@ -52,7 +49,7 @@ struct FlashcardsView: View {
                             Text("Word")
                                 .font(.headline)
                                 .foregroundColor(.secondary)
-                            Text(flashcards[currentIndex].word.capitalized)
+                            Text(wordsForFlashcards[currentIndex].text.capitalized)
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                                 .padding(.horizontal)
@@ -77,9 +74,11 @@ struct FlashcardsView: View {
                                 if horizontalAmount > 20 {
                                     previousCard()
                                     treeService.waterTree()
+                                    wordStorage.reviewWord(wordID: wordsForFlashcards[currentIndex].id)
                                 } else if horizontalAmount < -20 {
                                     nextCard()
                                     treeService.waterTree()
+                                    wordStorage.reviewWord(wordID: wordsForFlashcards[currentIndex].id)
                                 }
                             }
                         }
@@ -89,6 +88,8 @@ struct FlashcardsView: View {
                         showDefinition.toggle()
                     }
                     treeService.waterTree()
+                    wordStorage.reviewWord(wordID: wordsForFlashcards[currentIndex].id)
+                    wordStorage.reviewWord(wordID: wordsForFlashcards[currentIndex].id)
                     let action = showDefinition ? "flipped to definition" : "flipped to word"
                     wordStorage.addLogEntry("Flipped card \(currentIndex + 1): \(action)")
                     print("Flashcards log: Flipped card \(currentIndex + 1): \(action)")
@@ -103,7 +104,7 @@ struct FlashcardsView: View {
 
                     Spacer()
 
-                    Text("\(currentIndex + 1) / \(flashcards.count)")
+                    Text("\(currentIndex + 1) / \(wordsForFlashcards.count)")
 
                     Spacer()
 
@@ -111,7 +112,7 @@ struct FlashcardsView: View {
                         Image(systemName: "chevron.right")
                             .font(.title)
                     }
-                    .disabled(currentIndex == flashcards.count - 1)
+                    .disabled(currentIndex == wordsForFlashcards.count - 1)
                 }
                 .padding(.horizontal)
             }
@@ -121,24 +122,24 @@ struct FlashcardsView: View {
             wordStorage.addLogEntry("Opened Flashcards tab")
         }
         .task {
-            await loadFlashcards()
+            await loadWordsForFlashcards()
         }
     }
 
-    private func loadFlashcards() async {
+    private func loadWordsForFlashcards() async {
         isLoading = true
-        flashcards = await wordStorage.generateFlashcards()
+        wordsForFlashcards = await wordStorage.generateWordsForFlashcards()
         isLoading = false
-        wordStorage.addLogEntry("Loaded \(flashcards.count) flashcards")
-        print("Flashcards log: Loaded \(flashcards.count) flashcards")
+        wordStorage.addLogEntry("Loaded \(wordsForFlashcards.count) flashcards")
+        print("Flashcards log: Loaded \(wordsForFlashcards.count) flashcards")
     }
 
     private func nextCard() {
-        if currentIndex < flashcards.count - 1 {
+        if currentIndex < wordsForFlashcards.count - 1 {
             currentIndex += 1
             showDefinition = false
-            wordStorage.addLogEntry("Swiped to next card: \(flashcards[currentIndex].word)")
-            print("Flashcards log: Swiped to next card: \(flashcards[currentIndex].word)")
+            wordStorage.addLogEntry("Swiped to next card: \(wordsForFlashcards[currentIndex].text)")
+            print("Flashcards log: Swiped to next card: \(wordsForFlashcards[currentIndex].text)")
         }
     }
 
@@ -146,8 +147,8 @@ struct FlashcardsView: View {
         if currentIndex > 0 {
             currentIndex -= 1
             showDefinition = false
-            wordStorage.addLogEntry("Swiped to previous card: \(flashcards[currentIndex].word)")
-            print("Flashcards log: Swiped to previous card: \(flashcards[currentIndex].word)")
+            wordStorage.addLogEntry("Swiped to previous card: \(wordsForFlashcards[currentIndex].text)")
+            print("Flashcards log: Swiped to previous card: \(wordsForFlashcards[currentIndex].text)")
         }
     }
 }

@@ -17,6 +17,19 @@ class DatamuseService {
     private let baseURL = "https://api.datamuse.com/words"
 
     func fetchSpellingSuggestions(for word: String) async throws -> [SpellingSuggestion] {
+        let cacheKey = "spelling_\(word.lowercased())"
+
+        // Check cache first
+        if let cachedData = CacheManager.shared.getCachedData(for: cacheKey) {
+            do {
+                let decodedSuggestions = try JSONDecoder().decode([SpellingSuggestion].self, from: cachedData)
+                return decodedSuggestions
+            } catch {
+                // If decoding fails, proceed to fetch from API
+                print("Failed to decode cached spelling data: \(error)")
+            }
+        }
+
         guard let url = URL(string: "\(baseURL)?sp=\(word)&max=20") else {
             throw APIError.invalidURL
         }
@@ -30,6 +43,8 @@ class DatamuseService {
 
         do {
             let suggestions = try JSONDecoder().decode([SpellingSuggestion].self, from: data)
+            // Cache the new data
+            CacheManager.shared.cache(data: data, for: cacheKey)
             return suggestions
         } catch {
             throw APIError.decodingError(error)

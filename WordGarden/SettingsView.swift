@@ -1,11 +1,7 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
-
 import SwiftUI
 import SafariServices
 import UniformTypeIdentifiers
 import CryptoKit
-
-// All changes after that commit have been discarded, and the working directory is now at that state.
 
 // Backup data structure
 struct BackupData: Codable {
@@ -88,6 +84,7 @@ struct SettingsView: View {
     @State private var showingBackupAlert = false
     @State private var backupMessage: String?
     @State private var showingExportLog = false
+    @State private var showingAISettings = false
 
     private static let defaultNotificationTime: TimeInterval = {
         var components = DateComponents()
@@ -98,6 +95,7 @@ struct SettingsView: View {
 
     @AppStorage("notificationsEnabled") private var notificationsEnabled = false
     @AppStorage("notificationTime") private var notificationTime: TimeInterval = SettingsView.defaultNotificationTime
+    
     var exportDocument: JSONDocument? {
         guard let data = exportData else { return nil }
         return JSONDocument(data: data)
@@ -149,6 +147,18 @@ struct SettingsView: View {
 
     private var settingsForm: some View {
         Form {
+            Section(header: Text("Account")) {
+                if authViewModel.user != nil {
+                    NavigationLink(destination: ProfileView()) {
+                        Text("View Profile")
+                    }
+                } else {
+                    Button("Sign In") {
+                        authViewModel.signIn()
+                    }
+                }
+            }
+
             Section(header: Text("General")) {
                 Button("Show Onboarding") {
                     showOnboarding = true
@@ -164,22 +174,10 @@ struct SettingsView: View {
                     ), displayedComponents: .hourAndMinute)
                 }
             }
-
-            Section(header: Text("Data Management")) {
-                Button("Export Data") {
-                    showingExport = true
-                }
-                Button("Import Data") {
-                    showingImport = true
-                }
-                if let message = importMessage {
-                    Text(message)
-                }
-                Button("Export Today's Log") {
-                    showingExportLog = true
-                }
-                Button("Clear Word Cache", role: .destructive) {
-                    showingClearCacheAlert = true
+            
+            Section(header: Text("AI")) {
+                Button("AI Provider Settings") {
+                    showingAISettings = true
                 }
             }
 
@@ -217,15 +215,21 @@ struct SettingsView: View {
                 }
             }
 
-            Section(header: Text("Account")) {
-                if authViewModel.user != nil {
-                    NavigationLink(destination: ProfileView()) {
-                        Text("View Profile")
-                    }
-                } else {
-                    Button("Sign In") {
-                        authViewModel.signIn()
-                    }
+            Section(header: Text("Data Management")) {
+                Button("Export Data") {
+                    showingExport = true
+                }
+                Button("Import Data") {
+                    showingImport = true
+                }
+                if let message = importMessage {
+                    Text(message)
+                }
+                Button("Export Today's Log") {
+                    showingExportLog = true
+                }
+                Button("Clear Word Cache", role: .destructive) {
+                    showingClearCacheAlert = true
                 }
             }
 
@@ -240,10 +244,20 @@ struct SettingsView: View {
                     DocumentView(title: "Privacy Policy", content: loadTxtFile(name: "privacy"))
                 }
             }
+            
+            Section {
+                Button("Sign Out", role: .destructive) {
+                    showingSignOutAlert = true
+                }
+                .disabled(authViewModel.user == nil)
+            }
         }
         .navigationTitle("Settings")
         .onAppear {
             wordStorage.addLogEntry("Opened Settings tab")
+        }
+        .sheet(isPresented: $showingAISettings) {
+            AISettingsModalView()
         }
         .alert(isPresented: $showingClearCacheAlert) {
             Alert(
@@ -340,5 +354,199 @@ struct SettingsView: View {
             }
         }
         return "File not found. Make sure '\(name).txt' is added to the target's 'Copy Bundle Resources'."
+    }
+}
+
+// MARK: - AI Settings Modals
+
+private struct AISettingsModalView: View {
+    @Environment(\.dismiss) var dismiss
+    @State private var showingLocalAISettings = false
+    
+    @AppStorage("geminiApiKey") private var geminiApiKey = ""
+    @AppStorage("openaiApiKey") private var openaiApiKey = ""
+    @AppStorage("openrouterApiKey") private var openrouterApiKey = ""
+    @AppStorage("selectedOpenAIModel") private var selectedOpenAIModel = "gpt-5"
+    
+
+    @AppStorage("promptExplanation") private var promptExplanation = "Explain the word '{word}' in a simple way, in 30 words. DO NOT ADD ANY ADDITIONAL STUFF LIKE GREETINGS. ONLY INCLUDE THE ANSWER."
+    @AppStorage("promptExample") private var promptExample = "Create a simple example sentence using the word '{word}'."
+    @AppStorage("promptSimplify") private var promptSimplify = "Simplify this definition, ONLY GIVE ANSWER, NO GREETINGS, NO OTHER STUFF: {definition}"
+    @AppStorage("promptSystemOpenRouter") private var promptSystemOpenRouter = "You are a helpful assistant of the learning app WordGarden. Only provide the direct answer to the user's request without any conversational filler. SO ONLY GIVE ANSWER, NO GREETINGS OR ANY ADDITIONAL INFORMATION."
+
+    @State private var openAIModels: [String] = []
+    @State private var isFetchingModels = false
+    @State private var fetchModelsError: String?
+    
+    private var aiService: AIService {
+        let localAIKey = UserDefaults.standard.string(forKey: "localAIAPIKey") ?? ""
+        return AIService(geminiApiKey: geminiApiKey, openaiApiKey: openaiApiKey, openrouterApiKey: openrouterApiKey, localAIAPIKey: localAIKey)
+    }
+    
+    private var promptSettings: [(title: String, binding: Binding<String>)] {
+        [
+            ("Explanation Prompt", $promptExplanation),
+            ("Example Sentence Prompt", $promptExample),
+            ("Simplify Definition Prompt", $promptSimplify),
+            ("System Prompt", $promptSystemOpenRouter)
+        ]
+    }
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Cloud AI Providers")) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Gemini")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        SecureField("API Key", text: $geminiApiKey)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("OpenAI")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        SecureField("API Key", text: $openaiApiKey)
+                        
+                        if isFetchingModels {
+                            ProgressView()
+                        }
+                        
+                        if !openAIModels.isEmpty {
+                            Picker("Select Model", selection: $selectedOpenAIModel) {
+                                ForEach(openAIModels, id: \.self) { model in
+                                    Text(model).tag(model)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                        }
+                        
+                        if let error = fetchModelsError {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                    }
+                    .onChange(of: openaiApiKey) { newValue in
+                        guard !newValue.isEmpty else { return }
+                        Task {
+                            isFetchingModels = true
+                            fetchModelsError = nil
+                            do {
+                                let models = try await aiService.fetchOpenAIModels()
+                                self.openAIModels = models.filter { $0.contains("gpt") }.sorted()
+                                if !openAIModels.isEmpty, !openAIModels.contains(selectedOpenAIModel) {
+                                    selectedOpenAIModel = openAIModels.first!
+                                }
+                            } catch {
+                                fetchModelsError = error.localizedDescription
+                            }
+                            isFetchingModels = false
+                        }
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("OpenRouter")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        SecureField("API Key", text: $openrouterApiKey)
+                    }
+                }
+                
+                Section(header: Text("Prompt Settings")) {
+                    ForEach(promptSettings, id: \.title) { setting in
+                        NavigationLink(destination: PromptEditView(title: setting.title, prompt: setting.binding)) {
+                            VStack(alignment: .leading) {
+                                Text(setting.title)
+                                Text(setting.binding.wrappedValue)
+                                    .font(.caption)
+                                    .lineLimit(1)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+                
+                Section(header: Text("Local AI")) {
+                    Button("Local AI Settings...") {
+                        showingLocalAISettings = true
+                    }
+                }
+                
+                Section(header: Text("On-Device AI")) {
+                    Text("On-device inference using a local Core ML model. This feature is a placeholder and is not yet implemented.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .navigationTitle("AI Provider Settings")
+            .navigationBarItems(trailing: Button("Done") {
+                dismiss()
+            })
+            .sheet(isPresented: $showingLocalAISettings) {
+                LocalAISettingsModalView()
+            }
+        }
+    }
+}
+
+private struct LocalAISettingsModalView: View {
+    @Environment(\.dismiss) var dismiss
+    
+    @AppStorage("localAIBaseURL") private var localAIBaseURL = "http://localhost:1234/v1"
+    @AppStorage("localAIModelName") private var localAIModelName = ""
+    @AppStorage("localAIAPIKey") private var localAIAPIKey = ""
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Local AI Settings")) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Base URL")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        TextField("e.g., http://localhost:1234/v1", text: $localAIBaseURL)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Model Name")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        TextField("e.g., llama3:instruct", text: $localAIModelName)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("API Key")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        SecureField("Optional", text: $localAIAPIKey)
+                    }
+                    Text("For OpenAI-compatible local servers like LM Studio or Ollama.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .navigationTitle("Local AI Settings")
+            .navigationBarItems(trailing: Button("Done") {
+                dismiss()
+            })
+        }
+    }
+}
+
+private struct PromptEditView: View {
+    var title: String
+    @Binding var prompt: String
+
+    var body: some View {
+        VStack {
+            TextEditor(text: $prompt)
+                .padding()
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }

@@ -1,4 +1,3 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
 
 import Foundation
 import AVFoundation

@@ -1,7 +1,6 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
-
 import Foundation
 import UIKit // Import UIKit for UIImage
+import CryptoKit
 
 class CacheManager {
     static let shared = CacheManager()
@@ -15,13 +14,19 @@ class CacheManager {
         try? fileManager.createDirectory(at: self.cacheDirectory, withIntermediateDirectories: true, attributes: nil)
     }
 
+    private func sanitizedKey(for key: String) -> String {
+        let data = Data(key.utf8)
+        let hash = SHA256.hash(data: data)
+        return hash.compactMap { String(format: "%02x", $0) }.joined()
+    }
+
     func cache(data: Data, for key: String) {
-        let url = cacheDirectory.appendingPathComponent(key)
+        let url = cacheDirectory.appendingPathComponent(sanitizedKey(for: key))
         try? data.write(to: url)
     }
 
     func getCachedData(for key: String) -> Data? {
-        let url = cacheDirectory.appendingPathComponent(key)
+        let url = cacheDirectory.appendingPathComponent(sanitizedKey(for: key))
         return try? Data(contentsOf: url)
     }
 

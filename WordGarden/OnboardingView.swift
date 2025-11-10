@@ -1,5 +1,3 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
-
 import SwiftUI
 
 struct OnboardingView: View {
@@ -9,19 +7,6 @@ struct OnboardingView: View {
         ZStack {
             LinearGradient(gradient: Gradient(colors: [Color.green.opacity(0.4), Color.yellow.opacity(0.4)]), startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
-
-            VStack {
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        isOnboarding = false
-                    }) {
-                        Text("Skip")
-                            .padding()
-                    }
-                }
-                Spacer()
-            }
 
             TabView {
                 OnboardingPage(
@@ -106,4 +91,3 @@ struct OnboardingPage: View {
         .padding()
     }
 }
-

@@ -1,9 +1,5 @@
-// All changes after that commit have been discarded, and the working directory is now at that state.
-
 import SwiftUI
 import Firebase
-
-// All changes after that commit have been discarded, and the working directory is now at that state.
 
 @main
 struct WordGardenApp: App {
@@ -34,26 +30,14 @@ struct MainView: View {
 
     var body: some View {
         TabView {
-            ContentView()
+            LearnView()
                 .tabItem {
-                    Label("Vocabulary", systemImage: "book.fill")
-                }
-
-            FlashcardsView()
-                .tabItem {
-                    Label("Flashcards", systemImage: "rectangle.stack.fill")
+                    Label("Learn", systemImage: "book.fill")
                 }
 
             DiscoverView()
                 .tabItem {
                     Label("Discover", systemImage: "sparkles")
-                }
-
-
-
-            TreeView()
-                .tabItem {
-                    Label("Tree", systemImage: "tree.fill")
                 }
 
             SettingsView()
