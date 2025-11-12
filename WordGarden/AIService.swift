@@ -1,3 +1,4 @@
+import CoreML
 import Foundation
 
 // For parsing OpenAI models list
@@ -24,6 +25,9 @@ class AIService {
     private let openrouterApiKey: String
     private let localAIAPIKey: String
     
+    // On-device model
+    private var onDeviceModel: MLModel?
+    
     // Initializer is no longer failable, as on-device model doesn't require a key.
     // The availability of a service is handled by each specific call.
     init(geminiApiKey: String, openaiApiKey: String, openrouterApiKey: String, localAIAPIKey: String) {
@@ -31,6 +35,24 @@ class AIService {
         self.openaiApiKey = openaiApiKey
         self.openrouterApiKey = openrouterApiKey
         self.localAIAPIKey = localAIAPIKey
+        
+        // Load the on-device model
+        loadOnDeviceModel()
+    }
+
+    private func loadOnDeviceModel() {
+        // Note: The model name should match the name of the .mlpackage file you add to the project.
+        // You will need to convert a model (e.g., distilgpt2) to Core ML format first.
+        guard let modelURL = Bundle.main.url(forResource: "distilgpt2", withExtension: "mlpackage") else {
+            print("On-device model not found.")
+            return
+        }
+        do {
+            let config = MLModelConfiguration()
+            onDeviceModel = try MLModel(contentsOf: modelURL, configuration: config)
+        } catch {
+            print("Failed to load on-device model: \(error)")
+        }
     }
 
     func generateExplanation(for word: String, provider: AIProvider) async throws -> String {
@@ -139,7 +161,7 @@ class AIService {
     private func callGeminiAPI(prompt: String) async throws -> String {
         guard !geminiApiKey.isEmpty else { throw NSError(domain: "AIService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Gemini API key not set"]) }
 
-        let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=\(geminiApiKey)")!
+        let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=\(geminiApiKey)")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -346,52 +368,29 @@ class AIService {
     }
 
     private func callOnDeviceAPI(prompt: String) async throws -> String {
-        // This is a placeholder for on-device Core ML model inference.
-        // To implement this, you would typically use a library like MLC LLM or directly use Core ML.
-        
-        // --- Example Steps ---
-        
-        // 1. Import CoreML and any other necessary frameworks at the top of the file.
-        // import CoreML
-        
-        // 2. Load your compiled Core ML model (`.mlmodelc` file).
-        //    You must add the model to your Xcode project first.
-        /*
-        guard let modelURL = Bundle.main.url(forResource: "YourModelName", withExtension: "mlmodelc") else {
-            throw NSError(domain: "AIService", code: 6, userInfo: [NSLocalizedDescriptionKey: "On-device model not found."])
+        guard let model = onDeviceModel else {
+            throw NSError(domain: "AIService", code: 6, userInfo: [NSLocalizedDescriptionKey: "On-device model is not loaded."])
         }
-        let mlModel = try MLModel(contentsOf: modelURL)
-        */
-        
-        // 3. Prepare the input for the model.
-        //    For LLMs, this involves tokenizing the prompt string into an input tensor.
-        //    This step is complex and usually handled by a helper library or a custom tokenizer.
-        /*
-        let tokenizer = YourTokenizer()
-        let inputTokens = tokenizer.encode(prompt)
-        let inputTensor = // ... convert inputTokens to an MLMultiArray or other required input format
-        */
-        
-        // 4. Run the prediction.
-        /*
-        let provider = MLArrayBatchProvider(dictionary: ["input_name": inputTensor])
-        let prediction = try mlModel.prediction(from: provider)
-        */
-        
-        // 5. Process the output.
-        //    This involves de-tokenizing the output tensor back into a string.
-        /*
-        guard let outputTensor = prediction.featureValue(for: "output_name")?.multiArrayValue else {
-            throw NSError(domain: "AIService", code: 7, userInfo: [NSLocalizedDescriptionKey: "Failed to get model output."])
-        }
-        let outputTokens = // ... convert outputTensor back to an array of token IDs
-        let outputString = tokenizer.decode(outputTokens)
-        */
 
-        // For now, simulate work and return a placeholder message.
-        try await Task.sleep(nanoseconds: 500_000_000) // Simulate work (0.5 seconds)
+        // --- Placeholder for Tokenization and Inference ---
+        // The following is a simplified representation. A real implementation
+        // would require a proper tokenizer that matches the model (e.g., GPT-2 tokenizer).
+        // You might use a library like Hugging Face's `swift-transformers` for this.
+
+        // 1. Tokenize the prompt (placeholder)
+        // In a real scenario, you would use a tokenizer to convert the prompt string to input IDs.
+        // let tokenizer = GPT2Tokenizer()
+        // let inputIDs = tokenizer.encode(prompt)
         
-        // return outputString
-        return "On-device inference is not yet implemented. A Core ML model needs to be integrated."
+        // For this placeholder, we'll just return a message.
+        // A real implementation would proceed to create an MLMultiArray from inputIDs,
+        // run the prediction, and decode the output.
+
+        let outputString = "On-device inference with '\(prompt)' - tokenization and full inference pipeline not yet implemented."
+        
+        // Simulate async work
+        try await Task.sleep(nanoseconds: 100_000_000)
+
+        return outputString
     }
 }

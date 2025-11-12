@@ -28,18 +28,31 @@ struct CreditsView: View {
     ].sorted { $0.name.lowercased() < $1.name.lowercased() }
 
     var body: some View {
-        List(dependencies) { dependency in
-            VStack(alignment: .leading, spacing: 4) {
-                Text(dependency.name)
-                    .font(.headline)
-                if let url = URL(string: dependency.url) {
-                    Link(dependency.url, destination: url)
-                        .font(.caption)
-                        .foregroundColor(.blue)
+        List {
+            Section(header: Text("Dependencies").font(.headline)) {
+                ForEach(dependencies) { dependency in
+                    if let url = URL(string: dependency.url) {
+                        Link(destination: url) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(dependency.name)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    Text(dependency.url)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "safari")
+                                    .foregroundColor(.accentColor)
+                            }
+                            .padding(.vertical, 8)
+                        }
+                    }
                 }
             }
-            .padding(.vertical, 8)
         }
+        .listStyle(.insetGrouped)
         .navigationTitle("Credits")
         .navigationBarTitleDisplayMode(.inline)
     }

@@ -6,43 +6,85 @@ struct TreeView: View {
     @EnvironmentObject var wordStorage: WordStorage
 
     var body: some View {
-        VStack {
-            Text("My Tree")
-                .font(.largeTitle)
-                .padding()
-
-            Text(treeImage(for: treeService.tree.level, maxLevel: treeService.maxTreeLevel))
-                .font(.system(size: 200))
-                .padding()
-
-            Text("Level \(treeService.tree.level) / \(treeService.maxTreeLevel)")
-                .font(.title)
-                .padding(.bottom, 5)
-
-            ProgressView(value: treeService.wateringProgress) {
-                Text("Watering Progress")
-            } currentValueLabel: {
-                Text("\(Int(treeService.wateringProgress * 100))%")
+        VStack(spacing: 0) {
+            // Top Bar
+            HStack {
+                Text("My Tree")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                Spacer()
+                HStack {
+                    Text("XP: \(Int(treeService.wateringProgress * 100))%")
+                        .font(.headline)
+                    ProgressView(value: treeService.wateringProgress)
+                        .frame(width: 100)
+                }
             }
             .padding()
 
-            Button(action: {
-                if treeService.tree.level == treeService.maxTreeLevel {
-                    wordStorage.addLogEntry("Planted new tree")
-                    treeService.plantNewTree()
-                } else {
-                    wordStorage.addLogEntry("Watered tree")
-                    treeService.waterTree()
+            // Main Tree Area (Scrollable)
+            ScrollView {
+                VStack {
+                    Spacer()
+                    Text(treeImage(for: treeService.tree.level, maxLevel: treeService.maxTreeLevel))
+                        .font(.system(size: 250))
+                        .padding()
+                    Spacer()
                 }
-            }) {
-                Text(treeService.tree.level == treeService.maxTreeLevel ? "Plant New Tree" : "Water Tree")
-                    .font(.title)
-                    .padding()
-                    .background(treeService.canWaterTree() || treeService.tree.level == treeService.maxTreeLevel ? Color.blue : Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                .frame(minHeight: 400)
             }
-            .disabled(!treeService.canWaterTree() && treeService.tree.level < treeService.maxTreeLevel)
+
+            // Bottom Toolbar / Stats Panel
+            VStack(spacing: 10) {
+                HStack {
+                    VStack {
+                        Text("Words Learned")
+                            .font(.caption)
+                        Text("\(wordStorage.words.count)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                    }
+                    Spacer()
+                    VStack {
+                        Text("Daily Streak")
+                            .font(.caption)
+                        Text("7") // Placeholder, need to implement streak
+                            .font(.title2)
+                            .fontWeight(.bold)
+                    }
+                    Spacer()
+                    VStack {
+                        Text("Level / XP")
+                            .font(.caption)
+                        Text("\(treeService.tree.level) / \(Int(treeService.wateringProgress * 100))")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                    }
+                }
+                .padding(.horizontal)
+
+                Button(action: {
+                    if treeService.tree.level == treeService.maxTreeLevel {
+                        wordStorage.addLogEntry("Planted new tree")
+                        treeService.plantNewTree()
+                    } else {
+                        wordStorage.addLogEntry("Watered tree")
+                        treeService.waterTree()
+                    }
+                }) {
+                    Text(treeService.tree.level == treeService.maxTreeLevel ? "Plant New Tree" : "Water Tree")
+                        .font(.title2)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(treeService.canWaterTree() || treeService.tree.level == treeService.maxTreeLevel ? Color.blue : Color.gray)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .disabled(!treeService.canWaterTree() && treeService.tree.level < treeService.maxTreeLevel)
+                .padding(.horizontal)
+            }
+            .padding(.vertical)
+            .background(Color(.systemGray6))
         }
         .onAppear {
             wordStorage.addLogEntry("Opened Tree tab")

@@ -21,105 +21,129 @@ struct DiscoverView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: 25) {
                     // Word of the Day Section
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Word of the Day")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .padding(.horizontal)
+                    VStack(alignment: .leading, spacing: 15) {
+                        HStack {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                            Text("Word of the Day")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                        }
+                        .padding(.horizontal)
 
                         if isLoadingWordOfDay {
                             HStack {
                                 Spacer()
                                 ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
                                 Spacer()
                             }
-                            .frame(height: 100)
+                            .frame(height: 120)
+                            .background(LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.1), Color.blue.opacity(0.05)]), startPoint: .top, endPoint: .bottom))
+                            .cornerRadius(15)
+                            .padding(.horizontal)
                         } else if let word = wordOfTheDay {
                             WordOfDayCard(word: word)
                         } else {
                             Text("Tap to load word of the day")
                                 .foregroundColor(.secondary)
-                                .frame(height: 100)
+                                .frame(height: 120)
                                 .frame(maxWidth: .infinity)
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(10)
+                                .background(LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.05)]), startPoint: .top, endPoint: .bottom))
+                                .cornerRadius(15)
                                 .padding(.horizontal)
                         }
                     }
 
                     // Daily Tasks Section
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Daily Tasks")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .padding(.horizontal)
+                    VStack(alignment: .leading, spacing: 15) {
+                        HStack {
+                            Image(systemName: "checklist")
+                                .foregroundColor(.orange)
+                            Text("Daily Tasks")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                        }
+                        .padding(.horizontal)
 
                         ForEach(dailyTasks, id: \.self) { task in
                             HStack {
                                 Image(systemName: completedTasks.contains(task) ? "checkmark.circle.fill" : "circle")
                                     .foregroundColor(completedTasks.contains(task) ? .green : .gray)
+                                    .font(.title2)
                                 Text(task)
                                     .strikethrough(completedTasks.contains(task))
+                                    .font(.system(size: 16, weight: .medium, design: .rounded))
                                 Spacer()
                             }
-                            .padding()
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(10)
+                            .padding(15)
+                            .background(completedTasks.contains(task) ? LinearGradient(gradient: Gradient(colors: [Color.green.opacity(0.1), Color.green.opacity(0.05)]), startPoint: .top, endPoint: .bottom) : LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.05)]), startPoint: .top, endPoint: .bottom))
+                            .cornerRadius(12)
+                            .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
                             .padding(.horizontal)
                             .onTapGesture {
-                                toggleTask(task)
+                                withAnimation(.spring()) {
+                                    toggleTask(task)
+                                }
                             }
                         }
                     }
 
                     // Discover New Words Section
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Discover New Words")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .padding(.horizontal)
+                    VStack(alignment: .leading, spacing: 15) {
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.purple)
+                            Text("Discover New Words")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                        }
+                        .padding(.horizontal)
 
-                        HStack(spacing: 15) {
+                        HStack(spacing: 20) {
                             NavigationLink(destination: PhotoVocabView()) {
-                                VStack {
+                                VStack(spacing: 8) {
                                     Image(systemName: "camera.fill")
-                                        .font(.largeTitle)
-                                        .foregroundColor(.blue)
+                                        .font(.system(size: 30))
+                                        .foregroundColor(.white)
                                     Text("From Photo")
-                                        .font(.caption)
+                                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                        .foregroundColor(.white)
                                 }
-                                .frame(width: 80, height: 80)
-                                .background(Color.blue.opacity(0.1))
-                                .cornerRadius(10)
+                                .frame(width: 90, height: 90)
+                                .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
+                                .cornerRadius(15)
+                                .shadow(color: Color.blue.opacity(0.3), radius: 5, x: 0, y: 3)
                             }
 
                             Button(action: generateRandomWords) {
-                                VStack {
+                                VStack(spacing: 8) {
                                     Image(systemName: "shuffle")
-                                        .font(.largeTitle)
-                                        .foregroundColor(.green)
+                                        .font(.system(size: 30))
+                                        .foregroundColor(.white)
                                     Text("Random")
-                                        .font(.caption)
+                                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                        .foregroundColor(.white)
                                 }
-                                .frame(width: 80, height: 80)
-                                .background(Color.green.opacity(0.1))
-                                .cornerRadius(10)
+                                .frame(width: 90, height: 90)
+                                .background(LinearGradient(gradient: Gradient(colors: [Color.green, Color.green.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
+                                .cornerRadius(15)
+                                .shadow(color: Color.green.opacity(0.3), radius: 5, x: 0, y: 3)
                             }
                             .disabled(isLoadingRandom)
 
                             NavigationLink(destination: CategoriesView()) {
-                                VStack {
+                                VStack(spacing: 8) {
                                     Image(systemName: "list.bullet")
-                                        .font(.largeTitle)
-                                        .foregroundColor(.orange)
+                                        .font(.system(size: 30))
+                                        .foregroundColor(.white)
                                     Text("Categories")
-                                        .font(.caption)
+                                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                        .foregroundColor(.white)
                                 }
-                                .frame(width: 80, height: 80)
-                                .background(Color.orange.opacity(0.1))
-                                .cornerRadius(10)
+                                .frame(width: 90, height: 90)
+                                .background(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.orange.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
+                                .cornerRadius(15)
+                                .shadow(color: Color.orange.opacity(0.3), radius: 5, x: 0, y: 3)
                             }
                         }
                         .padding(.horizontal)
@@ -127,19 +151,26 @@ struct DiscoverView: View {
 
                     // Random Words Section
                     if !randomWords.isEmpty || isLoadingRandom {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Random Words")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .padding(.horizontal)
+                        VStack(alignment: .leading, spacing: 15) {
+                            HStack {
+                                Image(systemName: "dice.fill")
+                                    .foregroundColor(.pink)
+                                Text("Random Words")
+                                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                            }
+                            .padding(.horizontal)
 
                             if isLoadingRandom {
                                 HStack {
                                     Spacer()
                                     ProgressView("Loading new words...")
-                                        .padding(.vertical, 20)
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .pink))
+                                        .padding(.vertical, 30)
                                     Spacer()
                                 }
+                                .background(LinearGradient(gradient: Gradient(colors: [Color.pink.opacity(0.1), Color.pink.opacity(0.05)]), startPoint: .top, endPoint: .bottom))
+                                .cornerRadius(15)
+                                .padding(.horizontal)
                             } else {
                                 ForEach(randomWords) { word in
                                     RandomWordCard(word: word)
@@ -166,18 +197,23 @@ struct DiscoverView: View {
         Task {
             do {
                 let wordOfDayText = getWordOfTheDay()
-                let dictionaryService = DictionaryService()
-                let entries = try await dictionaryService.fetchWord(wordOfDayText)
-
-                if let entry = entries.first,
-                   let meaning = entry.meanings.first,
-                   let definition = meaning.definitions.first {
-                    let word = Word(
-                        text: entry.word,
-                        definition: definition.definition,
-                        example: definition.example ?? ""
-                    )
+                if let word = wordStorage.words.first(where: { $0.text.lowercased() == wordOfDayText.lowercased() }) {
                     wordOfTheDay = word
+                } else {
+                    // If not in user's list, fetch from API
+                    let dictionaryService = DictionaryService()
+                    let entries = try await dictionaryService.fetchWord(wordOfDayText)
+
+                    if let entry = entries.first,
+                        let meaning = entry.meanings.first,
+                        let definition = meaning.definitions.first {
+                        let word = Word(
+                            text: entry.word,
+                            definition: definition.definition,
+                            example: definition.example ?? ""
+                        )
+                        wordOfTheDay = word
+                    }
                 }
             } catch {
                 print("Failed to load word of the day: \(error)")
@@ -187,10 +223,18 @@ struct DiscoverView: View {
     }
 
     private func getWordOfTheDay() -> String {
-        let words = ["serendipity", "ephemeral", "lucid", "resilient", "ethereal", "pragmatic", "eloquent", "tenacious", "ubiquitous", "voracious"]
-        let calendar = Calendar.current
-        let dayOfYear = calendar.ordinality(of: .day, in: .year, for: Date()) ?? 1
-        return words[dayOfYear % words.count]
+        if !wordStorage.words.isEmpty {
+            let calendar = Calendar.current
+            let dayOfYear = calendar.ordinality(of: .day, in: .year, for: Date()) ?? 1
+            let index = dayOfYear % wordStorage.words.count
+            return wordStorage.words[index].text
+        } else {
+            // Fallback to predefined words if user has no words
+            let words = ["serendipity", "ephemeral", "lucid", "resilient", "ethereal", "pragmatic", "eloquent", "tenacious", "ubiquitous", "voracious"]
+            let calendar = Calendar.current
+            let dayOfYear = calendar.ordinality(of: .day, in: .year, for: Date()) ?? 1
+            return words[dayOfYear % words.count]
+        }
     }
 
     private func generateRandomWords() {
@@ -276,26 +320,31 @@ struct WordOfDayCard: View {
     let word: Word
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(word.text.capitalized)
-                .font(.title)
-                .fontWeight(.bold)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text(word.text.capitalized)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                Spacer()
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+            }
 
             Text(word.definition)
-                .font(.body)
+                .font(.system(size: 16, weight: .regular, design: .rounded))
                 .foregroundColor(.secondary)
                 .lineLimit(3)
 
             if !word.example.isEmpty {
                 Text("\"\(word.example)\"")
-                    .font(.caption)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundColor(.blue)
                     .italic()
             }
         }
-        .padding()
-        .background(Color.yellow.opacity(0.1))
+        .padding(20)
+        .background(LinearGradient(gradient: Gradient(colors: [Color.yellow.opacity(0.2), Color.yellow.opacity(0.1)]), startPoint: .top, endPoint: .bottom))
         .cornerRadius(15)
+        .shadow(color: Color.yellow.opacity(0.3), radius: 5, x: 0, y: 3)
         .padding(.horizontal)
     }
 }
@@ -304,19 +353,19 @@ struct RandomWordCard: View {
     let word: Word
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(word.text.capitalized)
-                .font(.headline)
-                .fontWeight(.semibold)
+                .font(.system(size: 18, weight: .semibold, design: .rounded))
 
             Text(word.definition)
-                .font(.subheadline)
+                .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundColor(.secondary)
                 .lineLimit(2)
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(10)
+        .padding(15)
+        .background(LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.05)]), startPoint: .top, endPoint: .bottom))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
         .padding(.horizontal)
     }
 }
@@ -332,15 +381,24 @@ struct CategoriesView: View {
     var body: some View {
         List {
             ForEach(categories, id: \.0) { category, words in
-                Section(header: Text(category)) {
+                Section(header: Text(category).font(.system(size: 18, weight: .semibold, design: .rounded))) {
                     ForEach(words, id: \.self) { word in
                         NavigationLink(destination: WordDetailView(word: .constant(Word(text: word, definition: "", example: "")))) {
-                            Text(word.capitalized)
+                            HStack {
+                                Text(word.capitalized)
+                                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                                    .font(.caption)
+                            }
+                            .padding(.vertical, 5)
                         }
                     }
                 }
             }
         }
         .navigationTitle("Word Categories")
+        .listStyle(InsetGroupedListStyle())
     }
 }

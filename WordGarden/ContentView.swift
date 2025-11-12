@@ -1,13 +1,11 @@
-
 import SwiftUI
 
 // The main view of the application, displaying the list of words.
 struct ContentView: View {
     @EnvironmentObject var wordStorage: WordStorage
     @State private var showingAddWordSheet = false
-    @State private var isEditing = false
-    @State private var selection = Set<UUID>()
-    @State private var showingDeleteConfirmation = false
+    @Binding var isEditing: Bool
+    @Binding var selection: Set<UUID>
     @State private var searchText = ""
 
     var filteredWords: [Binding<Word>] {
@@ -51,34 +49,9 @@ struct ContentView: View {
         .searchable(text: $searchText)
         .navigationTitle("WordGarden")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if !wordStorage.words.isEmpty {
-                    Button(isEditing ? "Done" : "Edit") {
-                        isEditing.toggle()
-                    }
-                }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                if isEditing {
-                    Button("Delete", role: .destructive) {
-                        showingDeleteConfirmation = true
-                    }
-                    .disabled(selection.isEmpty)
-                }
-            }
-        }
         .environment(\.editMode, .constant(isEditing ? EditMode.active : EditMode.inactive))
         .sheet(isPresented: $showingAddWordSheet) {
             AddWordView(wordStorage: wordStorage)
-        }
-        .alert("Delete Words", isPresented: $showingDeleteConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                deleteSelectedWords()
-            }
-        } message: {
-            Text("Are you sure you want to delete the selected words?")
         }
     }
 
@@ -86,24 +59,18 @@ struct ContentView: View {
         let wordIdsToDelete = offsets.map { filteredWords[$0].wrappedValue.id }
         wordStorage.words.removeAll(where: { wordIdsToDelete.contains($0.id) })
     }
-
-    private func deleteSelectedWords() {
-        wordStorage.words.removeAll(where: { selection.contains($0.id) })
-        selection.removeAll()
-        isEditing = false
-    }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         // Preview with words
-        ContentView()
+        ContentView(isEditing: .constant(false), selection: .constant(Set<UUID>()))
             .environmentObject(WordStorage())
 
         // Preview with empty state
         let emptyStorage = WordStorage()
         emptyStorage.words = []
-        return ContentView()
+        return ContentView(isEditing: .constant(false), selection: .constant(Set<UUID>()))
             .environmentObject(emptyStorage)
             .previewDisplayName("Empty State")
 
