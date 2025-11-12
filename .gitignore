@@ -5,3 +5,7 @@ API_Usage_Considerations.md
 .gitignore
 opencode
 /firebase-app
+/build
+.github/instructions/kluster-code-verify.instructions.md
+.kluster
+tree.md

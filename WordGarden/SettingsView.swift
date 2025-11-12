@@ -95,6 +95,16 @@ struct SettingsView: View {
 
     @AppStorage("notificationsEnabled") private var notificationsEnabled = false
     @AppStorage("notificationTime") private var notificationTime: TimeInterval = SettingsView.defaultNotificationTime
+
+    // System Settings bundle values
+    @AppStorage("autoBackupEnabled") private var autoBackupEnabled = true
+    @AppStorage("backupFrequency") private var backupFrequency = "daily"
+    @AppStorage("debugMode") private var debugMode = false
+    @AppStorage("analyticsEnabled") private var analyticsEnabled = true
+    @AppStorage("crashReportingEnabled") private var crashReportingEnabled = true
+    @AppStorage("logLevel") private var logLevel = "info"
+    @AppStorage("cacheSizeLimit") private var cacheSizeLimit = "100"
+    @AppStorage("autoClearCache") private var autoClearCache = false
     
     var exportDocument: JSONDocument? {
         guard let data = exportData else { return nil }
@@ -124,8 +134,8 @@ struct SettingsView: View {
         NavigationView {
             settingsForm
         }
-        .onChange(of: notificationsEnabled) { value in
-            if value {
+        .onChange(of: notificationsEnabled) { oldValue, newValue in
+            if newValue {
                 wordStorage.addLogEntry("Enabled notifications")
                 NotificationManager.shared.requestAuthorization()
                 NotificationManager.shared.scheduleDailyNotification(at: Date(timeIntervalSince1970: notificationTime))
@@ -134,7 +144,7 @@ struct SettingsView: View {
                 NotificationManager.shared.cancelNotifications()
             }
         }
-        .onChange(of: notificationTime) { newTime in
+        .onChange(of: notificationTime) { oldTime, newTime in
             if notificationsEnabled {
                 let timeFormatter = DateFormatter()
                 timeFormatter.dateFormat = "HH:mm"
@@ -191,14 +201,26 @@ struct SettingsView: View {
                     } else {
                         Button("Sync Now") {
                             Task {
-                                try? await cloudSyncManager.uploadAllData(wordStorage: wordStorage, treeService: treeService)
+                                do {
+                                    try await cloudSyncManager.uploadAllData(wordStorage: wordStorage, treeService: treeService)
+                                    wordStorage.addLogEntry("Successfully synced data to cloud")
+                                } catch {
+                                    wordStorage.addLogEntry("Failed to sync data to cloud: \(error.localizedDescription)")
+                                    print("Sync error: \(error)")
+                                }
                             }
                         }
                         .disabled(!cloudSyncManager.isConnected)
-                        
+
                         Button("Restore from Cloud") {
                             Task {
-                                try? await cloudSyncManager.downloadAllData(wordStorage: wordStorage, treeService: treeService)
+                                do {
+                                    try await cloudSyncManager.downloadAllData(wordStorage: wordStorage, treeService: treeService)
+                                    wordStorage.addLogEntry("Successfully restored data from cloud")
+                                } catch {
+                                    wordStorage.addLogEntry("Failed to restore data from cloud: \(error.localizedDescription)")
+                                    print("Restore error: \(error)")
+                                }
                             }
                         }
                         .disabled(!cloudSyncManager.isConnected)
@@ -207,6 +229,11 @@ struct SettingsView: View {
                         Text("Connect to the internet to sync.")
                             .font(.caption)
                             .foregroundColor(.secondary)
+                    }
+                    if let error = cloudSyncManager.lastSyncError {
+                        Text("Last sync error: \(error)")
+                            .font(.caption)
+                            .foregroundColor(.red)
                     }
                 } else {
                     Text("Sign in to enable cloud sync.")
@@ -233,9 +260,26 @@ struct SettingsView: View {
                 }
             }
 
+            Section(header: Text("System Settings")) {
+                Toggle("Auto Backup", isOn: $autoBackupEnabled)
+                Text("Backup Frequency: \(backupFrequency.capitalized)")
+                    .foregroundColor(.secondary)
+                Toggle("Debug Mode", isOn: $debugMode)
+                Toggle("Analytics", isOn: $analyticsEnabled)
+                Toggle("Crash Reporting", isOn: $crashReportingEnabled)
+                Text("Log Level: \(logLevel.capitalized)")
+                    .foregroundColor(.secondary)
+                Text("Cache Limit: \(cacheSizeLimit) MB")
+                    .foregroundColor(.secondary)
+                Toggle("Auto Clear Cache", isOn: $autoClearCache)
+            }
+
             Section(header: Text("About")) {
                 NavigationLink("About Me") {
                     aboutMeView
+                }
+                NavigationLink("Credits") {
+                    CreditsView()
                 }
                 NavigationLink("Terms of Service") {
                     DocumentView(title: "Terms of Service", content: loadTxtFile(name: "terms-of-service"))
@@ -253,6 +297,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             wordStorage.addLogEntry("Opened Settings tab")
         }
@@ -348,7 +393,7 @@ struct SettingsView: View {
     private func loadTxtFile(name: String) -> String {
         if let filepath = Bundle.main.path(forResource: name, ofType: "txt") {
             do {
-                return try String(contentsOfFile: filepath)
+                return try String(contentsOf: URL(fileURLWithPath: filepath), encoding: .utf8)
             } catch {
                 return "Could not load file: \(error.localizedDescription)"
             }
@@ -387,7 +432,6 @@ private struct AISettingsModalView: View {
         [
             ("Explanation Prompt", $promptExplanation),
             ("Example Sentence Prompt", $promptExample),
-            ("Simplify Definition Prompt", $promptSimplify),
             ("System Prompt", $promptSystemOpenRouter)
         ]
     }
@@ -415,7 +459,8 @@ private struct AISettingsModalView: View {
                         
                         if !openAIModels.isEmpty {
                             Picker("Select Model", selection: $selectedOpenAIModel) {
-                                ForEach(openAIModels, id: \.self) { model in
+                                ForEach(openAIModels, id: \.self) {
+                                    model in
                                     Text(model).tag(model)
                                 }
                             }
@@ -428,7 +473,7 @@ private struct AISettingsModalView: View {
                                 .foregroundColor(.red)
                         }
                     }
-                    .onChange(of: openaiApiKey) { newValue in
+                    .onChange(of: openaiApiKey) { oldValue, newValue in
                         guard !newValue.isEmpty else { return }
                         Task {
                             isFetchingModels = true

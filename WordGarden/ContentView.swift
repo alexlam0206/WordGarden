@@ -8,14 +8,23 @@ struct ContentView: View {
     @State private var isEditing = false
     @State private var selection = Set<UUID>()
     @State private var showingDeleteConfirmation = false
+    @State private var searchText = ""
+
+    var filteredWords: [Binding<Word>] {
+        $wordStorage.words.filter { $0.wrappedValue.text.localizedCaseInsensitiveContains(searchText) || searchText.isEmpty }
+    }
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             if wordStorage.words.isEmpty {
-                EmptyStateView()
+                VStack {
+                    Spacer()
+                    EmptyStateView()
+                    Spacer()
+                }
             } else {
                 List(selection: $selection) {
-                    ForEach($wordStorage.words) { $word in
+                    ForEach(filteredWords) { $word in
                         NavigationLink(destination: WordDetailView(word: $word)) {
                             WordRowView(word: word)
                         }
@@ -37,8 +46,11 @@ struct ContentView: View {
                     .shadow(radius: 4, x: 0, y: 4)
             }
             .padding()
+            .padding(.bottom, wordStorage.words.isEmpty ? 40 : 0)
         }
+        .searchable(text: $searchText)
         .navigationTitle("WordGarden")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 if !wordStorage.words.isEmpty {
@@ -71,11 +83,12 @@ struct ContentView: View {
     }
 
     private func deleteWords(at offsets: IndexSet) {
-        wordStorage.words.remove(atOffsets: offsets)
+        let wordIdsToDelete = offsets.map { filteredWords[$0].wrappedValue.id }
+        wordStorage.words.removeAll(where: { wordIdsToDelete.contains($0.id) })
     }
 
     private func deleteSelectedWords() {
-        wordStorage.words.removeAll { selection.contains($0.id) }
+        wordStorage.words.removeAll(where: { selection.contains($0.id) })
         selection.removeAll()
         isEditing = false
     }

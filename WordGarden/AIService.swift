@@ -44,12 +44,61 @@ class AIService {
         let prompt = promptTemplate.replacingOccurrences(of: "{word}", with: word)
         return try await generateResponse(prompt: prompt, provider: provider)
     }
+    
+    func identifyImage(imageData: Data) async throws -> String {
+        guard !geminiApiKey.isEmpty else {
+            throw NSError(domain: "AIService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Gemini API key not set."])
+        }
 
-    func simplifyDefinition(_ definition: String, provider: AIProvider = .openrouter) async throws -> String {
-        let promptTemplate = UserDefaults.standard.string(forKey: "promptSimplify") ?? "Simplify this definition for a 13-year-old learner: {definition}"
-        let prompt = promptTemplate.replacingOccurrences(of: "{definition}", with: definition)
-        return try await generateResponse(prompt: prompt, provider: provider)
+        let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=\(geminiApiKey)")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let base64Image = imageData.base64EncodedString()
+        let prompt = "Identify the main object in this image. Respond with only a single noun, in lowercase."
+
+        let body: [String: Any] = [
+            "contents": [
+                [
+                    "parts": [
+                        ["text": prompt],
+                        [
+                            "inline_data": [
+                                "mime_type": "image/jpeg",
+                                "data": base64Image
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+            let responseBody = String(data: data, encoding: .utf8) ?? "No response body"
+            print("Gemini Vision API failed with status code: \(statusCode). Body: \(responseBody)")
+            throw NSError(domain: "AIService", code: 2, userInfo: [NSLocalizedDescriptionKey: "API request failed with status \(statusCode)"])
+        }
+
+        if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let candidates = json["candidates"] as? [[String: Any]],
+           let firstCandidate = candidates.first,
+           let content = firstCandidate["content"] as? [String: Any],
+           let parts = content["parts"] as? [[String: Any]],
+           let firstPart = parts.first,
+           let text = firstPart["text"] as? String {
+            // Clean up the response to get a single word
+            return text.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: .whitespacesAndNewlines).first ?? "unknown"
+        } else {
+            throw NSError(domain: "AIService", code: 3, userInfo: [NSLocalizedDescriptionKey: "Failed to parse API response"])
+        }
     }
+
 
     private func generateResponse(prompt: String, provider: AIProvider) async throws -> String {
         switch provider {

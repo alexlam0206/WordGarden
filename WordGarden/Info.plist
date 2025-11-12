@@ -12,14 +12,29 @@
 				<string>com.googleusercontent.apps.287215877843-pmfg7vcm4mn1e06otg4a8od470qop7n4</string>
 			</array>
 		</dict>
-		<dict/>
-		<dict/>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wordgarden</string>
+			</array>
+		</dict>
 	</array>
 	<key>GIDClientID</key>
 	<string>287215877843-pmfg7vcm4mn1e06otg4a8od470qop7n4.apps.googleusercontent.com</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<string>processing</string>
+	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to identify objects and help you learn new words.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to your camera to take photos of objects for vocabulary learning.</string>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.nok.WordGarden</string>
 	</array>
 </dict>
 </plist>

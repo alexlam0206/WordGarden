@@ -1,5 +1,5 @@
 {
-  "originHash" : "b0069970cab96e230ba0ea71ca0baf9e1f76a167c102d4fba27739127c6e7d9e",
+  "originHash" : "f26605caa55796c1b4a99e3dbcab289f7c209dffab4b967ad87d3789c478f7ee",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -44,15 +44,6 @@
       "state" : {
         "revision" : "35b601a60fbbea2de3ea461f604deaaa4d8bbd0c",
         "version" : "3.2.0"
-      }
-    },
-    {
-      "identity" : "google-api-objectivec-client-for-rest",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/google/google-api-objectivec-client-for-rest.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "08c9d93c558c4b6e1d85fa5988e0b74befe1a05c"
       }
     },
     {
@@ -152,15 +143,6 @@
       "state" : {
         "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
         "version" : "2.4.0"
-      }
-    },
-    {
-      "identity" : "swift-google-drive-client",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/darrarski/swift-google-drive-client",
-      "state" : {
-        "branch" : "main",
-        "revision" : "3ca48747bbc4d82fcf68a978c42a6f225d92ea03"
       }
     },
     {

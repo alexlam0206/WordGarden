@@ -8,16 +8,6 @@ struct LearnView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Picker("Learn", selection: $selectedTab) {
-                    Text("Words").tag(0)
-                    Text("Flashcards").tag(1)
-                    Text("Tree").tag(2)
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal)
-
-                Spacer()
-
                 switch selectedTab {
                 case 0:
                     ContentView()
@@ -29,13 +19,24 @@ struct LearnView: View {
                     ContentView()
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .top)
             .navigationTitle("Learn")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Picker("Learn", selection: $selectedTab) {
+                        Text("Words").tag(0)
+                        Text("Flashcards").tag(1)
+                        Text("Tree").tag(2)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .frame(width: 300)
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         showingFocusView = true
                     }) {
-                        Label("Focus", systemImage: "leaf.fill")
+                        Label("Focus", systemImage: "moon.fill")
                     }
                 }
             }

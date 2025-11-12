@@ -11,53 +11,25 @@
 		E461D24D2EC08C140080A1BF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E461D24C2EC08C140080A1BF /* FirebaseAuth */; };
 		E461D24F2EC08C990080A1BF /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E461D24E2EC08C990080A1BF /* FirebaseStorage */; };
 		E461D2522EC08D1F0080A1BF /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E461D2512EC08D1F0080A1BF /* GoogleSignIn */; };
-		E48FE7962EC0254700ED6338 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48FE7842EC01BE300ED6338 /* SwiftUI.framework */; };
-		E48FE7972EC0254700ED6338 /* SwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E48FE7842EC01BE300ED6338 /* SwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E48FE7992EC0254800ED6338 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48FE7822EC01BE300ED6338 /* WidgetKit.framework */; };
-		E48FE79A2EC0254800ED6338 /* WidgetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E48FE7822EC01BE300ED6338 /* WidgetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E48FE7A02EC0352800ED6338 /* terms-of-service.txt in Resources */ = {isa = PBXBuildFile; fileRef = E48FE79F2EC0352800ED6338 /* terms-of-service.txt */; };
 		E48FE7A12EC0352800ED6338 /* privacy.txt in Resources */ = {isa = PBXBuildFile; fileRef = E48FE79E2EC0352800ED6338 /* privacy.txt */; };
-		E48FE7EC2EC03CEC00ED6338 /* GoogleDriveClient in Frameworks */ = {isa = PBXBuildFile; productRef = E48FE7EB2EC03CEC00ED6338 /* GoogleDriveClient */; };
-		E4C2EF4B2EC0418C00127DCD /* GTMSessionFetcher in Frameworks */ = {isa = PBXBuildFile; productRef = E48FE7A42EC0367E00ED6339 /* GTMSessionFetcher */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		E48FE71C2EBF81E800ED6338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E48FE7022EBF81E600ED6338 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E48FE7092EBF81E600ED6338;
-			remoteInfo = WordGarden;
-		};
-		E48FE7262EBF81E800ED6338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E48FE7022EBF81E600ED6338 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E48FE7092EBF81E600ED6338;
-			remoteInfo = WordGarden;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
-		E48FE7982EC0254700ED6338 /* Embed Frameworks */ = {
+		E40F77112EC4B26E00A0A27C /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolderSpec = 13;
 			files = (
-				E48FE7972EC0254700ED6338 /* SwiftUI.framework in Embed Frameworks */,
-				E48FE79A2EC0254800ED6338 /* WidgetKit.framework in Embed Frameworks */,
 			);
-			name = "Embed Frameworks";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E48FE70A2EBF81E600ED6338 /* WordGarden.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WordGarden.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E48FE71B2EBF81E800ED6338 /* WordGardenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WordGardenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E48FE7252EBF81E800ED6338 /* WordGardenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WordGardenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E48FE7802EC01BE300ED6338 /* WordGarden WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "WordGarden WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E48FE7822EC01BE300ED6338 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		E48FE7842EC01BE300ED6338 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		E48FE79E2EC0352800ED6338 /* privacy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = privacy.txt; sourceTree = "<group>"; };
@@ -91,34 +63,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E461D2522EC08D1F0080A1BF /* GoogleSignIn in Frameworks */,
-				E4C2EF4B2EC0418C00127DCD /* GTMSessionFetcher in Frameworks */,
 				E461D24F2EC08C990080A1BF /* FirebaseStorage in Frameworks */,
 				E461D24D2EC08C140080A1BF /* FirebaseAuth in Frameworks */,
 				E461D24B2EC08BE90080A1BF /* FirebaseFirestore in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E48FE7182EBF81E800ED6338 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E48FE7222EBF81E800ED6338 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E48FE77D2EC01BE300ED6338 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E48FE7EC2EC03CEC00ED6338 /* GoogleDriveClient in Frameworks */,
-				E48FE7962EC0254700ED6338 /* SwiftUI.framework in Frameworks */,
-				E48FE7992EC0254800ED6338 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,9 +85,6 @@
 			isa = PBXGroup;
 			children = (
 				E48FE70A2EBF81E600ED6338 /* WordGarden.app */,
-				E48FE71B2EBF81E800ED6338 /* WordGardenTests.xctest */,
-				E48FE7252EBF81E800ED6338 /* WordGardenUITests.xctest */,
-				E48FE7802EC01BE300ED6338 /* WordGarden WidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -166,6 +110,7 @@
 				E48FE7062EBF81E600ED6338 /* Sources */,
 				E48FE7072EBF81E600ED6338 /* Frameworks */,
 				E48FE7082EBF81E600ED6338 /* Resources */,
+				E40F77112EC4B26E00A0A27C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -176,7 +121,6 @@
 			);
 			name = WordGarden;
 			packageProductDependencies = (
-				E48FE7A42EC0367E00ED6339 /* GTMSessionFetcher */,
 				E461D24A2EC08BE90080A1BF /* FirebaseFirestore */,
 				E461D24C2EC08C140080A1BF /* FirebaseAuth */,
 				E461D24E2EC08C990080A1BF /* FirebaseStorage */,
@@ -185,67 +129,6 @@
 			productName = WordGarden;
 			productReference = E48FE70A2EBF81E600ED6338 /* WordGarden.app */;
 			productType = "com.apple.product-type.application";
-		};
-		E48FE71A2EBF81E800ED6338 /* WordGardenTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E48FE7332EBF81E800ED6338 /* Build configuration list for PBXNativeTarget "WordGardenTests" */;
-			buildPhases = (
-				E48FE7172EBF81E800ED6338 /* Sources */,
-				E48FE7182EBF81E800ED6338 /* Frameworks */,
-				E48FE7192EBF81E800ED6338 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E48FE71D2EBF81E800ED6338 /* PBXTargetDependency */,
-			);
-			name = WordGardenTests;
-			packageProductDependencies = (
-			);
-			productName = WordGardenTests;
-			productReference = E48FE71B2EBF81E800ED6338 /* WordGardenTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		E48FE7242EBF81E800ED6338 /* WordGardenUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E48FE7362EBF81E800ED6338 /* Build configuration list for PBXNativeTarget "WordGardenUITests" */;
-			buildPhases = (
-				E48FE7212EBF81E800ED6338 /* Sources */,
-				E48FE7222EBF81E800ED6338 /* Frameworks */,
-				E48FE7232EBF81E800ED6338 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E48FE7272EBF81E800ED6338 /* PBXTargetDependency */,
-			);
-			name = WordGardenUITests;
-			packageProductDependencies = (
-			);
-			productName = WordGardenUITests;
-			productReference = E48FE7252EBF81E800ED6338 /* WordGardenUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
-		E48FE77F2EC01BE300ED6338 /* WordGarden WidgetExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E48FE7932EC01BE500ED6338 /* Build configuration list for PBXNativeTarget "WordGarden WidgetExtension" */;
-			buildPhases = (
-				E48FE77C2EC01BE300ED6338 /* Sources */,
-				E48FE77D2EC01BE300ED6338 /* Frameworks */,
-				E48FE77E2EC01BE300ED6338 /* Resources */,
-				E48FE7982EC0254700ED6338 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "WordGarden WidgetExtension";
-			packageProductDependencies = (
-				E48FE7EB2EC03CEC00ED6338 /* GoogleDriveClient */,
-			);
-			productName = "WordGarden WidgetExtension";
-			productReference = E48FE7802EC01BE300ED6338 /* WordGarden WidgetExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -260,17 +143,6 @@
 					E48FE7092EBF81E600ED6338 = {
 						CreatedOnToolsVersion = 26.0;
 					};
-					E48FE71A2EBF81E800ED6338 = {
-						CreatedOnToolsVersion = 26.0;
-						TestTargetID = E48FE7092EBF81E600ED6338;
-					};
-					E48FE7242EBF81E800ED6338 = {
-						CreatedOnToolsVersion = 26.0;
-						TestTargetID = E48FE7092EBF81E600ED6338;
-					};
-					E48FE77F2EC01BE300ED6338 = {
-						CreatedOnToolsVersion = 26.0;
-					};
 				};
 			};
 			buildConfigurationList = E48FE7052EBF81E600ED6338 /* Build configuration list for PBXProject "WordGarden" */;
@@ -283,8 +155,6 @@
 			mainGroup = E48FE7012EBF81E600ED6338;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				E48FE7A22EC0367E00ED6338 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
-				E48FE7EA2EC03CE500ED6338 /* XCRemoteSwiftPackageReference "swift-google-drive-client" */,
 				E461D2452EC087C10080A1BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				E461D2502EC08CE20080A1BF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
@@ -294,9 +164,6 @@
 			projectRoot = "";
 			targets = (
 				E48FE7092EBF81E600ED6338 /* WordGarden */,
-				E48FE71A2EBF81E800ED6338 /* WordGardenTests */,
-				E48FE7242EBF81E800ED6338 /* WordGardenUITests */,
-				E48FE77F2EC01BE300ED6338 /* WordGarden WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -311,27 +178,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E48FE7192EBF81E800ED6338 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E48FE7232EBF81E800ED6338 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E48FE77E2EC01BE300ED6338 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -342,41 +188,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E48FE7172EBF81E800ED6338 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E48FE7212EBF81E800ED6338 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E48FE77C2EC01BE300ED6338 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		E48FE71D2EBF81E800ED6338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E48FE7092EBF81E600ED6338 /* WordGarden */;
-			targetProxy = E48FE71C2EBF81E800ED6338 /* PBXContainerItemProxy */;
-		};
-		E48FE7272EBF81E800ED6338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E48FE7092EBF81E600ED6338 /* WordGarden */;
-			targetProxy = E48FE7262EBF81E800ED6338 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E48FE72F2EBF81E800ED6338 /* Debug */ = {
@@ -387,13 +199,15 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = WordGarden/WordGarden.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = HW9UA7GDZ9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WordGarden/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WordGarden;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSCameraUsageDescription = "To identify objects in photos and add them to your garden.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -404,7 +218,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = alexlam0206.WordGarden;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -428,13 +242,15 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = WordGarden/WordGarden.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = HW9UA7GDZ9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WordGarden/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WordGarden;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSCameraUsageDescription = "To identify objects in photos and add them to your garden.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -445,7 +261,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = alexlam0206.WordGarden;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -582,168 +398,6 @@
 			};
 			name = Release;
 		};
-		E48FE7342EBF81E800ED6338 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HW9UA7GDZ9;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = alexlam0206.WordGardenTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WordGarden.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WordGarden";
-			};
-			name = Debug;
-		};
-		E48FE7352EBF81E800ED6338 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HW9UA7GDZ9;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = alexlam0206.WordGardenTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WordGarden.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WordGarden";
-			};
-			name = Release;
-		};
-		E48FE7372EBF81E800ED6338 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HW9UA7GDZ9;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = alexlam0206.WordGardenUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = WordGarden;
-			};
-			name = Debug;
-		};
-		E48FE7382EBF81E800ED6338 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HW9UA7GDZ9;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = alexlam0206.WordGardenUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = WordGarden;
-			};
-			name = Release;
-		};
-		E48FE7942EC01BE500ED6338 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = "WordGarden WidgetExtension.entitlements";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HW9UA7GDZ9;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WordGarden Widget/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = WordGardenWidget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "alexlam0206.WordGarden-Widget";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		E48FE7952EC01BE500ED6338 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = "WordGarden WidgetExtension.entitlements";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HW9UA7GDZ9;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WordGarden Widget/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = WordGardenWidget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "alexlam0206.WordGarden-Widget";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -765,33 +419,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E48FE7332EBF81E800ED6338 /* Build configuration list for PBXNativeTarget "WordGardenTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E48FE7342EBF81E800ED6338 /* Debug */,
-				E48FE7352EBF81E800ED6338 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E48FE7362EBF81E800ED6338 /* Build configuration list for PBXNativeTarget "WordGardenUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E48FE7372EBF81E800ED6338 /* Debug */,
-				E48FE7382EBF81E800ED6338 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E48FE7932EC01BE500ED6338 /* Build configuration list for PBXNativeTarget "WordGarden WidgetExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E48FE7942EC01BE500ED6338 /* Debug */,
-				E48FE7952EC01BE500ED6338 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -809,22 +436,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 9.0.0;
-			};
-		};
-		E48FE7A22EC0367E00ED6338 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		E48FE7EA2EC03CE500ED6338 /* XCRemoteSwiftPackageReference "swift-google-drive-client" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/darrarski/swift-google-drive-client";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -849,16 +460,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E461D2502EC08CE20080A1BF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
-		};
-		E48FE7A42EC0367E00ED6339 /* GTMSessionFetcher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E48FE7A22EC0367E00ED6338 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
-			productName = GTMSessionFetcher;
-		};
-		E48FE7EB2EC03CEC00ED6338 /* GoogleDriveClient */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E48FE7EA2EC03CE500ED6338 /* XCRemoteSwiftPackageReference "swift-google-drive-client" */;
-			productName = GoogleDriveClient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

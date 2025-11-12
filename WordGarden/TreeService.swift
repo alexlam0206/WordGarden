@@ -67,6 +67,9 @@ class TreeService: ObservableObject {
             localDefaults.set(encodedLogs, forKey: wateringLogsKey)
         }
         localDefaults.set(treesGrown, forKey: treesGrownKey)
+
+        // Also save to shared UserDefaults for widgets
+        updateSharedDefaults()
     }
 
     private func load() {
@@ -82,6 +85,18 @@ class TreeService: ObservableObject {
         }
 
         self.treesGrown = localDefaults.integer(forKey: treesGrownKey)
+    }
+
+    // Updates shared UserDefaults for widgets
+    private func updateSharedDefaults() {
+        let sharedDefaults = UserDefaults(suiteName: "group.com.nok.WordGarden")
+        sharedDefaults?.set(tree.level, forKey: "treeLevel")
+        sharedDefaults?.set(treesGrown, forKey: "treesGrown")
+        // Calculate next watering time (24 hours from last watering)
+        if let lastWatering = wateringLogs.last?.date {
+            let nextWatering = lastWatering.addingTimeInterval(24 * 3600)
+            sharedDefaults?.set(nextWatering.timeIntervalSince1970, forKey: "nextWatering")
+        }
     }
 
 

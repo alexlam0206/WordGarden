@@ -29,6 +29,7 @@ class WordStorage: ObservableObject {
         self.words = WordStorage.loadWords()
         self.dailyLogs = WordStorage.loadLogs()
         cleanOldLogs()
+        updateSharedDefaults()
     }
 
     // Loads words from UserDefaults.
@@ -56,6 +57,8 @@ class WordStorage: ObservableObject {
         if let encodedWords = try? JSONEncoder().encode(words) {
             UserDefaults.standard.set(encodedWords, forKey: "words")
         }
+        // Also save to shared UserDefaults for widgets
+        updateSharedDefaults()
     }
 
     // Saves the current array of daily logs to UserDefaults.
@@ -63,6 +66,14 @@ class WordStorage: ObservableObject {
         if let encodedLogs = try? JSONEncoder().encode(dailyLogs) {
             UserDefaults.standard.set(encodedLogs, forKey: "dailyLogs")
         }
+    }
+
+    // Updates shared UserDefaults for widgets
+    private func updateSharedDefaults() {
+        let sharedDefaults = UserDefaults(suiteName: "group.com.nok.WordGarden")
+        sharedDefaults?.set(words.count, forKey: "wordCount")
+        // Also save completed tasks if we have them
+        // This would be managed by the DiscoverView, but we can save the current state
     }
 
     // Retrieves the index for today's log, creating a new log if one doesn't exist.

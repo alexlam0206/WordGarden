@@ -207,21 +207,6 @@ struct WordDetailView: View {
                 if let firstDef = entries.first?.meanings.first?.definitions.first?.definition {
                     word.definition = firstDef
                 }
-                // Auto-simplify the first definition if AI is available
-                if let firstDef = entries.first?.meanings.first?.definitions.first?.definition {
-                    do {
-                        let simplified = try await aiService.simplifyDefinition(firstDef)
-                        if var updatedEntries = self.wordEntries {
-                            updatedEntries[0].meanings[0].definitions[0].definition = simplified
-                            self.wordEntries = updatedEntries
-                            // Update word.definition with simplified
-                            word.definition = simplified
-                        }
-                    } catch {
-                        print("Failed to simplify definition: \(error.localizedDescription)")
-                        // Ignore simplification errors
-                    }
-                }
             }
         } catch let error as APIError {
             if case .apiError(404) = error {
