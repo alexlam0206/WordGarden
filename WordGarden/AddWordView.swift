@@ -6,6 +6,9 @@ struct AddWordView: View {
     @State private var text = ""
     @State private var definition = ""
     @State private var example = ""
+    
+    var word: String?
+    var initialDefinition: String?
 
     var body: some View {
         NavigationView {
@@ -25,6 +28,14 @@ struct AddWordView: View {
                     presentationMode.wrappedValue.dismiss()
                 }
             })
+        }
+        .onAppear {
+            if let word = word {
+                self.text = word
+            }
+            if let definition = initialDefinition {
+                self.definition = definition
+            }
         }
     }
 }

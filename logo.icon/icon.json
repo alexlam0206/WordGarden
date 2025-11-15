@@ -2,8 +2,8 @@
   "color-space-for-untagged-svg-colors" : "display-p3",
   "fill" : {
     "linear-gradient" : [
-      "srgb:0.27976,0.66028,1.00000,0.00000",
-      "srgb:0.00000,0.53333,1.00000,0.00000"
+      "display-p3:0.99410,0.97065,0.91659,1.00000",
+      "display-p3:0.99410,0.97065,0.91659,1.00000"
     ]
   },
   "groups" : [
@@ -21,7 +21,7 @@
               "value" : true
             }
           ],
-          "hidden" : false,
+          "hidden" : true,
           "image-name" : "logo.png",
           "name" : "logo",
           "opacity" : 1,
@@ -30,6 +30,67 @@
             "translation-in-points" : [
               2,
               5
+            ]
+          }
+        },
+        {
+          "blend-mode" : "multiply",
+          "fill" : "automatic",
+          "glass-specializations" : [
+            {
+              "value" : false
+            },
+            {
+              "appearance" : "dark",
+              "value" : true
+            },
+            {
+              "appearance" : "tinted",
+              "value" : true
+            }
+          ],
+          "image-name" : "IMG_8463.PNG",
+          "name" : "IMG_8463",
+          "position" : {
+            "scale" : 2,
+            "translation-in-points" : [
+              0,
+              15
+            ]
+          }
+        },
+        {
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : "overlay"
+            },
+            {
+              "appearance" : "tinted",
+              "value" : "normal"
+            }
+          ],
+          "glass-specializations" : [
+            {
+              "value" : false
+            },
+            {
+              "appearance" : "dark",
+              "value" : true
+            },
+            {
+              "appearance" : "tinted",
+              "value" : true
+            }
+          ],
+          "hidden" : true,
+          "image-name" : "HEIF影像.HEIC",
+          "name" : "HEIF影像",
+          "position" : {
+            "scale" : 1.8,
+            "translation-in-points" : [
+              -21.96875,
+              79.3046875
             ]
           }
         }

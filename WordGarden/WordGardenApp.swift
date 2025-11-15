@@ -15,11 +15,26 @@ struct WordGardenApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainView()
-                .environmentObject(authViewModel)
-                .environmentObject(wordStorage)
-                .environmentObject(treeService)
-                .environmentObject(cloudSyncManager)
+            TabView {
+                LearnView()
+                    .tabItem {
+                        Label("Learn", systemImage: "book.fill")
+                    }
+                
+                DiscoverView()
+                    .tabItem {
+                        Label("Discover", systemImage: "sparkles")
+                    }
+                
+                SettingsView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
+            }
+            .environmentObject(authViewModel)
+            .environmentObject(wordStorage)
+            .environmentObject(treeService)
+            .environmentObject(cloudSyncManager)
         }
     }
 }
@@ -74,7 +89,7 @@ struct MainView: View {
             UITabBar.appearance().standardAppearance = appearance
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
-        .onChange(of: showOnboarding) { oldValue, newValue in
+        .onChange(of: showOnboarding) { newValue in
             if !newValue {
                 // Onboarding completed
                 hasCompletedOnboarding = true

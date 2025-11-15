@@ -28,10 +28,6 @@
 		<string>remote-notification</string>
 		<string>processing</string>
 	</array>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your photo library to identify objects and help you learn new words.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app needs access to your camera to take photos of objects for vocabulary learning.</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.com.nok.WordGarden</string>
