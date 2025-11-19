@@ -30,6 +30,7 @@ class WordStorage: ObservableObject {
         self.dailyLogs = WordStorage.loadLogs()
         cleanOldLogs()
         updateSharedDefaults()
+        loadLocalDictionary()
     }
 
     // Loads words from UserDefaults.
@@ -148,35 +149,143 @@ class WordStorage: ObservableObject {
         return true
     }
 
-    // Generates words suitable for flashcards. If a definition is missing, it attempts to fetch one from the DictionaryService.
-    func generateWordsForFlashcards() async -> [Word] {
-        let dictionaryService = DictionaryService()
-        var wordsForFlashcards: [Word] = []
+    // Generates words suitable for flashcards using local data only.
+    func generateWordsForFlashcards() -> [Word] {
+        words.filter { !$0.definition.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
 
-        for var word in words {
-            var definition = word.definition
-            if definition.isEmpty {
-                do {
-                    let entries = try await dictionaryService.fetchWord(word.text)
-                    if let firstMeaning = entries.first?.meanings.first,
-                        let firstDef = firstMeaning.definitions.first {
-                        definition = firstDef.definition
-                        // Update the word's definition in storage
-                        if let index = words.firstIndex(where: { $0.id == word.id }) {
-                            words[index].definition = definition
-                        }
-                    }
-                } catch {
-                    definition = "Definition not available."
-                }
-            }
-            
-            if !definition.isEmpty && definition != "Definition not available." {
-                word.definition = definition // Ensure definition is set
-                wordsForFlashcards.append(word)
+    // MARK: - Local Dictionary
+    private var localDictionary: [String: String] = [:]
+
+    func lookupDefinition(for text: String) -> String? {
+        let key = text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        return localDictionary[key]
+    }
+
+    private func loadLocalDictionary() {
+        if let url = Bundle.main.url(forResource: "common_words", withExtension: "csv"),
+           let data = try? Data(contentsOf: url),
+           let csv = String(data: data, encoding: .utf8) {
+            parseCSV(csv)
+            return
+        }
+        parseCSV(WordStorage.embeddedCommonWordsCSV)
+    }
+
+    private func parseCSV(_ csv: String) {
+        var dict: [String: String] = [:]
+        for line in csv.split(separator: "\n") {
+            let parts = line.split(separator: ",", maxSplits: 1).map { String($0).trimmingCharacters(in: .whitespaces) }
+            if parts.count == 2 {
+                let word = parts[0].lowercased()
+                let def = parts[1]
+                dict[word] = def
             }
         }
-
-        return wordsForFlashcards
+        localDictionary = dict
     }
+
+    private static let embeddedCommonWordsCSV = """
+ability,skill to do something well
+accept,agree to receive or undertake
+active,engaging in action or activity
+advice,recommendation offered about future action
+allow,permit or give permission
+answer,response to a question
+arrive,reach a place
+artist,person who creates art
+balance,even distribution ensuring stability
+beautiful,pleasing the senses or mind
+believe,accept as true
+benefit,advantage or profit gained
+begin,start to do something
+better,more excellent or effective
+bridge,structure carrying a path over a gap
+build,construct by putting parts together
+calm,free from excitement or disturbance
+care,serious attention or consideration
+center,point equally distant from edges
+change,make or become different
+clean,free from dirt, marks or stains
+clear,easy to understand; transparent
+close,shut something or nearby
+collect,bring together and gather
+common,frequent; shared by many
+connect,join together
+create,bring something into existence
+decide,make a choice
+deep,extending far down
+define,explain the meaning
+detail,individual fact or item
+develop,grow or cause to grow
+easy,achieved without great effort
+edge,line where a surface ends
+energy,capacity for activity or work
+enjoy,take pleasure in
+example,representative item or case
+exercise,activity to improve health
+family,group related by blood or marriage
+focus,center of interest or activity
+friend,person attached by affection
+future,time yet to come
+garden,plot for growing plants
+goal,desired result or outcome
+grow,increase in size or maturity
+happy,feeling or showing pleasure
+help,make easier for someone
+idea,thought or suggestion
+important,of great significance or value
+improve,make better
+include,make part of a whole
+interest,curiosity or stake in something
+kind,considerate or type of thing
+learn,gain knowledge or skill
+light,illumination; not heavy
+listen,give attention to sound
+love,deep affection
+make,form or produce
+manage,be in charge of; handle
+measure,ascertain size or amount
+memory,capacity to remember
+money,medium of exchange
+nature,physical world and life
+need,require something essential
+open,allow access; not closed
+order,arrangement; command
+parent,father or mother
+peace,freedom from disturbance
+people,human beings in general
+plan,decide on and arrange
+practice,repeat to improve skill
+present,existing or gift
+protect,keep safe from harm
+quick,fast; prompt
+read,look at and understand text
+reduce,make smaller in amount
+repeat,do again
+respect,admiration due to qualities
+safe,protected from danger
+school,place for education
+simple,easy to understand or do
+slow,not fast
+smart,intelligent or neat
+space,area available; cosmos
+special,different from usual; important
+start,beginning of an activity
+strong,powerful; not weak
+study,apply the mind to learning
+support,back up or help
+teach,give knowledge or skill
+team,group working together
+think,have ideas or opinions
+time,continued progress of existence
+travel,go from one place to another
+use,apply for a purpose
+value,importance; worth
+voice,sound produced in speaking
+water,clear liquid essential for life
+word,a unit of language
+work,activity involving effort
+write,compose text
+"""
 }

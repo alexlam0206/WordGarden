@@ -1,15 +1,11 @@
 import SwiftUI
-import Firebase
 
 @main
 struct WordGardenApp: App {
-    @StateObject private var authViewModel = AuthenticationViewModel()
     @StateObject private var wordStorage = WordStorage()
     @StateObject private var treeService = TreeService()
-    @StateObject private var cloudSyncManager = CloudSyncManager.shared
 
     init() {
-        FirebaseApp.configure()
         NotificationManager.shared.requestAuthorization()
     }
 
@@ -31,24 +27,19 @@ struct WordGardenApp: App {
                         Label("Settings", systemImage: "gear")
                     }
             }
-            .environmentObject(authViewModel)
             .environmentObject(wordStorage)
             .environmentObject(treeService)
-            .environmentObject(cloudSyncManager)
+            
         }
     }
 }
 
 struct MainView: View {
-    @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var wordStorage: WordStorage
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
-    @State private var showOnboarding = false
     @State private var selectedTab = 0
 
     var body: some View {
-        ZStack {
-            TabView(selection: $selectedTab) {
+        TabView(selection: $selectedTab) {
                 LearnView()
                     .tabItem {
                         Label("Learn", systemImage: "book.fill")
@@ -66,21 +57,9 @@ struct MainView: View {
                         Label("Settings", systemImage: "gear")
                     }
                     .tag(2)
-            }
-
-            // Show onboarding on first launch
-            if showOnboarding {
-                OnboardingView(isOnboarding: $showOnboarding)
-                    .transition(.opacity)
-            }
         }
         .onAppear {
             wordStorage.addLogEntry("Opened app")
-
-            // Check if this is first launch
-            if !hasCompletedOnboarding {
-                showOnboarding = true
-            }
 
             // Add glassmorphism effect to tab bar
             let appearance = UITabBarAppearance()
@@ -89,12 +68,7 @@ struct MainView: View {
             UITabBar.appearance().standardAppearance = appearance
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
-        .onChange(of: showOnboarding) { newValue in
-            if !newValue {
-                // Onboarding completed
-                hasCompletedOnboarding = true
-            }
-        }
+        
         .onOpenURL { url in
             // Handle deep links from widgets
             if url.scheme == "wordgarden" {

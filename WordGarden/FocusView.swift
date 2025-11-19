@@ -22,31 +22,18 @@ struct FocusView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            // Beautiful gradient background with night theme
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(hex: "2C3E50"),
-                    Color(hex: "34495E"),
-                    Color(hex: "2C3E50")
+                    Color.black.opacity(0.9),
+                    Color.blue.opacity(0.25),
+                    Color.black.opacity(0.9)
                 ]),
                 startPoint: .top,
                 endPoint: .bottom
             )
             .edgesIgnoringSafeArea(.all)
 
-            // Subtle star pattern overlay
-            GeometryReader { geometry in
-                ForEach(0..<20) { _ in
-                    Circle()
-                        .fill(Color.white.opacity(0.1))
-                        .frame(width: 2, height: 2)
-                        .position(
-                            x: CGFloat.random(in: 0...geometry.size.width),
-                            y: CGFloat.random(in: 0...geometry.size.height)
-                        )
-                }
-            }
-
+            ScrollView {
             VStack(spacing: 20) {
                 Text("🌙 Focus Garden")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -160,7 +147,7 @@ struct FocusView: View {
                                  .trim(from: 0, to: CGFloat(timeRemaining) / CGFloat(initialDuration))
                                  .stroke(
                                      AngularGradient(
-                                         gradient: Gradient(colors: [Color(hex: "667eea"), Color(hex: "764ba2")]),
+                                         gradient: Gradient(colors: [Color.indigo, Color.purple]),
                                          center: .center,
                                          startAngle: .degrees(-90),
                                          endAngle: .degrees(270)
@@ -212,7 +199,8 @@ struct FocusView: View {
                 .padding(.bottom, 40)
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 20)
+            .padding(.bottom, 40)
+            }
 
             // Exit Button - positioned to avoid overlap
             Button(action: {

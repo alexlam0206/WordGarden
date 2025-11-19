@@ -69,22 +69,19 @@ struct SafariView: UIViewControllerRepresentable {
 }
 
 struct SettingsView: View {
-    @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var wordStorage: WordStorage
     @EnvironmentObject var treeService: TreeService
-    @EnvironmentObject var cloudSyncManager: CloudSyncManager
     @State private var showingClearCacheAlert = false
     @State private var showingSignOutAlert = false
     @State private var selectedURL: URL?
     @State private var showSafari: Bool = false
-    @State private var showOnboarding = false
     @State private var showingExport = false
     @State private var showingImport = false
     @State private var importMessage: String?
     @State private var showingBackupAlert = false
     @State private var backupMessage: String?
     @State private var showingExportLog = false
-    @State private var showingAISettings = false
+    
 
     private static let defaultNotificationTime: TimeInterval = {
         var components = DateComponents()
@@ -96,15 +93,7 @@ struct SettingsView: View {
     @AppStorage("notificationsEnabled") private var notificationsEnabled = false
     @AppStorage("notificationTime") private var notificationTime: TimeInterval = SettingsView.defaultNotificationTime
 
-    // System Settings bundle values
-    @AppStorage("autoBackupEnabled") private var autoBackupEnabled = true
-    @AppStorage("backupFrequency") private var backupFrequency = "daily"
-    @AppStorage("debugMode") private var debugMode = false
-    @AppStorage("analyticsEnabled") private var analyticsEnabled = true
-    @AppStorage("crashReportingEnabled") private var crashReportingEnabled = true
-    @AppStorage("logLevel") private var logLevel = "info"
-    @AppStorage("cacheSizeLimit") private var cacheSizeLimit = "100"
-    @AppStorage("autoClearCache") private var autoClearCache = false
+
     
     var exportDocument: JSONDocument? {
         guard let data = exportData else { return nil }
@@ -157,23 +146,9 @@ struct SettingsView: View {
 
     private var settingsForm: some View {
         Form {
-            Section(header: Text("Account")) {
-                if authViewModel.user != nil {
-                    NavigationLink(destination: ProfileView()) {
-                        Text("View Profile")
-                    }
-                } else {
-                    Button("Sign In") {
-                        authViewModel.signIn()
-                    }
-                }
-            }
+            
 
-            Section(header: Text("General")) {
-                Button("Show Onboarding") {
-                    showOnboarding = true
-                }
-            }
+            
 
             Section(header: Text("Notifications")) {
                 Toggle("Enable Notifications", isOn: $notificationsEnabled)
@@ -185,62 +160,9 @@ struct SettingsView: View {
                 }
             }
             
-            Section(header: Text("AI")) {
-                Button("AI Provider Settings") {
-                    showingAISettings = true
-                }
-            }
+            
 
-            Section(header: Text("Cloud Sync")) {
-                if cloudSyncManager.isLoggedIn {
-                    if cloudSyncManager.syncing {
-                        HStack {
-                            ProgressView()
-                            Text("Syncing...")
-                        }
-                    } else {
-                        Button("Sync Now") {
-                            Task {
-                                do {
-                                    try await cloudSyncManager.uploadAllData(wordStorage: wordStorage, treeService: treeService)
-                                    wordStorage.addLogEntry("Successfully synced data to cloud")
-                                } catch {
-                                    wordStorage.addLogEntry("Failed to sync data to cloud: \(error.localizedDescription)")
-                                    print("Sync error: \(error)")
-                                }
-                            }
-                        }
-                        .disabled(!cloudSyncManager.isConnected)
-
-                        Button("Restore from Cloud") {
-                            Task {
-                                do {
-                                    try await cloudSyncManager.downloadAllData(wordStorage: wordStorage, treeService: treeService)
-                                    wordStorage.addLogEntry("Successfully restored data from cloud")
-                                } catch {
-                                    wordStorage.addLogEntry("Failed to restore data from cloud: \(error.localizedDescription)")
-                                    print("Restore error: \(error)")
-                                }
-                            }
-                        }
-                        .disabled(!cloudSyncManager.isConnected)
-                    }
-                    if !cloudSyncManager.isConnected {
-                        Text("Connect to the internet to sync.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    if let error = cloudSyncManager.lastSyncError {
-                        Text("Last sync error: \(error)")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                } else {
-                    Text("Sign in to enable cloud sync.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
+            
 
             Section(header: Text("Data Management")) {
                 Button("Export Data") {
@@ -260,19 +182,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section(header: Text("System Settings")) {
-                Toggle("Auto Backup", isOn: $autoBackupEnabled)
-                Text("Backup Frequency: \(backupFrequency.capitalized)")
-                    .foregroundColor(.secondary)
-                Toggle("Debug Mode", isOn: $debugMode)
-                Toggle("Analytics", isOn: $analyticsEnabled)
-                Toggle("Crash Reporting", isOn: $crashReportingEnabled)
-                Text("Log Level: \(logLevel.capitalized)")
-                    .foregroundColor(.secondary)
-                Text("Cache Limit: \(cacheSizeLimit) MB")
-                    .foregroundColor(.secondary)
-                Toggle("Auto Clear Cache", isOn: $autoClearCache)
-            }
+
 
             Section(header: Text("About")) {
                 NavigationLink("About Me") {
@@ -290,10 +200,7 @@ struct SettingsView: View {
             }
             
             Section {
-                Button("Sign Out", role: .destructive) {
-                    showingSignOutAlert = true
-                }
-                .disabled(authViewModel.user == nil)
+                
             }
         }
         .navigationTitle("Settings")
@@ -301,9 +208,7 @@ struct SettingsView: View {
         .onAppear {
             wordStorage.addLogEntry("Opened Settings tab")
         }
-        .sheet(isPresented: $showingAISettings) {
-            AISettingsModalView()
-        }
+        
         .alert(isPresented: $showingClearCacheAlert) {
             Alert(
                 title: Text("Clear Cache"),
@@ -314,25 +219,13 @@ struct SettingsView: View {
                 secondaryButton: .cancel()
             )
         }
-        .alert(isPresented: $showingSignOutAlert) {
-            Alert(
-                title: Text("Sign Out"),
-                message: Text("Are you sure you want to sign out?"),
-                 primaryButton: .destructive(Text("Sign Out")) {
-                     wordStorage.addLogEntry("Signed out")
-                     authViewModel.signOut()
-                 },
-                secondaryButton: .cancel()
-            )
-        }
+        
         .sheet(isPresented: $showSafari) {
             if let url = selectedURL {
                 SafariView(url: url)
             }
         }
-        .fullScreenCover(isPresented: $showOnboarding) {
-            OnboardingView(isOnboarding: $showOnboarding)
-        }
+        
         .fileExporter(isPresented: $showingExport, document: exportDocument, contentType: .json, defaultFilename: "WordGarden Backup") { result in
             // Handle export result if needed
         }
@@ -402,9 +295,18 @@ struct SettingsView: View {
     }
 }
 
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        return NavigationView { SettingsView() }
+            .environmentObject(WordStorage())
+            .environmentObject(TreeService())
+            .preferredColorScheme(.light)
+    }
+}
+
 // MARK: - AI Settings Modals
 
-private struct AISettingsModalView: View {
+/* private struct AISettingsModalView: View {
     @Environment(\.dismiss) var dismiss
     @State private var showingLocalAISettings = false
     
@@ -534,9 +436,9 @@ private struct AISettingsModalView: View {
             }
         }
     }
-}
+} */
 
-private struct LocalAISettingsModalView: View {
+/* private struct LocalAISettingsModalView: View {
     @Environment(\.dismiss) var dismiss
     
     @AppStorage("localAIBaseURL") private var localAIBaseURL = "http://localhost:1234/v1"
@@ -580,9 +482,9 @@ private struct LocalAISettingsModalView: View {
             })
         }
     }
-}
+} */
 
-private struct PromptEditView: View {
+/* private struct PromptEditView: View {
     var title: String
     @Binding var prompt: String
 
@@ -594,4 +496,4 @@ private struct PromptEditView: View {
                 .navigationBarTitleDisplayMode(.inline)
         }
     }
-}
+} */

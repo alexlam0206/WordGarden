@@ -2,6 +2,24 @@
 import Foundation
 import Combine
 
+enum TreeGrowthPhase: String, CaseIterable {
+    case seed = "Seed"
+    case sprout = "Sprout"
+    case sapling = "Sapling"
+    case youngTree = "Young Tree"
+    case matureTree = "Mature Tree"
+    
+    var imageName: String {
+        switch self {
+        case .seed: return "tree_seed"
+        case .sprout: return "tree_sprout"
+        case .sapling: return "tree_sapling"
+        case .youngTree: return "tree_young"
+        case .matureTree: return "tree_mature"
+        }
+    }
+}
+
 class TreeService: ObservableObject {
     @Published var tree: Tree
     @Published var wateringLogs: [WateringLog]
@@ -11,8 +29,10 @@ class TreeService: ObservableObject {
     private let wateringLogsKey = "wateringLogs"
     private let treesGrownKey = "treesGrown"
 
-    let maxWateringsPerLevel = 5 // How many waterings to level up the tree
-    let maxTreeLevel = 20 // The maximum level a tree can reach before being 'fully grown'
+    // New XP system constants
+    let maxXP = 100 // Maximum XP per tree
+    let maxTreeLevel = 5 // Simplified: only 5 levels (0-4)
+    let xpPerAction = 10 // XP gained per study action or watering
 
     init() {
         self.tree = Tree()
@@ -20,36 +40,83 @@ class TreeService: ObservableObject {
         load()
     }
 
-    var wateringProgress: Float {
-        // Calculate progress towards the next level
-        let currentWateringsInLevel = wateringLogs.count % maxWateringsPerLevel
-        return Float(currentWateringsInLevel) / Float(maxWateringsPerLevel)
+    var xpProgress: Float {
+        // Calculate XP progress (0.0 to 1.0)
+        return Float(tree.xp) / Float(maxXP)
+    }
+    
+    var currentPhase: TreeGrowthPhase {
+        // Define growth phases based on XP
+        let xp = tree.xp
+        switch xp {
+        case 0..<20: return .seed
+        case 20..<40: return .sprout
+        case 40..<60: return .sapling
+        case 60..<80: return .youngTree
+        case 80..<100: return .matureTree
+        default: return .seed
+        }
+    }
+    
+    var isTreeFullyGrown: Bool {
+        return tree.xp >= maxXP
     }
 
     func waterTree() {
-        guard tree.level < maxTreeLevel else { return } // Cannot water a fully grown tree
-
+        guard !isTreeFullyGrown else { return } // Cannot water a fully grown tree
+        
+        // Add XP for watering
+        tree.xp = min(tree.xp + xpPerAction, maxXP)
         wateringLogs.append(WateringLog())
+        
+        // Update level based on XP
+        updateLevelFromXP()
+        
+        tree.lastWatered = Date()
+        save()
+    }
 
-        if wateringLogs.count % maxWateringsPerLevel == 0 {
-            tree.level += 1
-        }
-
+    func awardStudyProgress() {
+        guard !isTreeFullyGrown else { return }
+        
+        // Add XP for study progress
+        tree.xp = min(tree.xp + xpPerAction, maxXP)
+        wateringLogs.append(WateringLog())
+        
+        // Update level based on XP
+        updateLevelFromXP()
+        
         tree.lastWatered = Date()
         save()
     }
 
     func plantNewTree() {
-        guard tree.level >= maxTreeLevel else { return } // Only plant new tree if current is fully grown
+        guard isTreeFullyGrown else { return } // Only plant new tree if current is fully grown
 
         treesGrown += 1
         tree = Tree() // Reset tree to a new one
         wateringLogs = [] // Clear watering logs for the new tree
         save()
     }
+    
+    private func updateLevelFromXP() {
+        // Update level based on XP thresholds
+        let xp = tree.xp
+        if xp >= 80 {
+            tree.level = 4 // Mature Tree
+        } else if xp >= 60 {
+            tree.level = 3 // Young Tree
+        } else if xp >= 40 {
+            tree.level = 2 // Sapling
+        } else if xp >= 20 {
+            tree.level = 1 // Sprout
+        } else {
+            tree.level = 0 // Seed
+        }
+    }
 
     func canWaterTree() -> Bool {
-        guard tree.level < maxTreeLevel else { return false } // Cannot water a fully grown tree
+        guard !isTreeFullyGrown else { return false } // Cannot water a fully grown tree
 
         // Allow watering once per day
         if let lastWatered = wateringLogs.last?.date {
@@ -91,7 +158,9 @@ class TreeService: ObservableObject {
     private func updateSharedDefaults() {
         let sharedDefaults = UserDefaults(suiteName: "group.com.nok.WordGarden")
         sharedDefaults?.set(tree.level, forKey: "treeLevel")
+        sharedDefaults?.set(tree.xp, forKey: "treeXP")
         sharedDefaults?.set(treesGrown, forKey: "treesGrown")
+        sharedDefaults?.set(currentPhase.rawValue, forKey: "treePhase")
         // Calculate next watering time (24 hours from last watering)
         if let lastWatering = wateringLogs.last?.date {
             let nextWatering = lastWatering.addingTimeInterval(24 * 3600)
@@ -101,4 +170,3 @@ class TreeService: ObservableObject {
 
 
 }
-

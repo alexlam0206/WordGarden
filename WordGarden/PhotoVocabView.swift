@@ -6,6 +6,7 @@ import AVFoundation
 
 struct PhotoVocabView: View {
     @EnvironmentObject var wordStorage: WordStorage
+    @EnvironmentObject var treeService: TreeService
     @State private var inputImage: UIImage?
     @State private var showingCustomCamera = false
 
@@ -98,7 +99,7 @@ struct PhotoVocabView: View {
                             .cornerRadius(8)
                             .frame(maxWidth: .infinity)
                             .padding(.top, 8)
-                            .transition(.scale.combined(with: .opacity))
+                            .transition(.scale.combined(with: .opacity)) // Corrected: .scale.combined(with: .opacity)
                         }
                     }
             }
@@ -147,7 +148,7 @@ struct PhotoVocabView: View {
         }
 
         .alert("Could Not Send Email", isPresented: $showingMailAlert, actions: {
-            Button("OK") { }
+            Button("OK") { } // Corrected: Removed unnecessary backslash before quote
         }, message: {
             Text(mailError ?? "An unknown error occurred.")
         })
@@ -155,6 +156,11 @@ struct PhotoVocabView: View {
             guard let image = newImage else { return }
             Task {
                 await processImage(image)
+            }
+        }
+        .onAppear {
+            if inputImage == nil {
+                showingCustomCamera = true
             }
         }
     }
@@ -170,54 +176,13 @@ struct PhotoVocabView: View {
 
     private func addWordToGarden() {
         guard let word = identifiedWord else { return }
-
-        Task {
-            do {
-                // Try to fetch definition automatically
-                let dictionaryService = DictionaryService()
-                let entries = try await dictionaryService.fetchWord(word)
-
-                // Use the first definition if available
-                var definition = ""
-                var example = ""
-                if let entry = entries.first,
-                   let meaning = entry.meanings.first,
-                   let firstDefinition = meaning.definitions.first {
-                    definition = firstDefinition.definition
-                    example = firstDefinition.example ?? ""
-                }
-
-                // Add the word to storage
-                wordStorage.addWord(text: word, definition: definition, example: example)
-                wordStorage.addLogEntry("Added word from photo: \(word)")
-
-                // Show success feedback
-                withAnimation {
-                    showingSuccessMessage = true
-                }
-
-                // Hide success message after 2 seconds
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    withAnimation {
-                        self.showingSuccessMessage = false
-                    }
-                }
-
-            } catch {
-                // If definition fetch fails, add word without definition
-                wordStorage.addWord(text: word, definition: "", example: "")
-                wordStorage.addLogEntry("Added word from photo (no definition): \(word)")
-
-                withAnimation {
-                    showingSuccessMessage = true
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    withAnimation {
-                        self.showingSuccessMessage = false
-                    }
-                }
-            }
+        let def = wordStorage.lookupDefinition(for: word) ?? "Add your own definition."
+        wordStorage.addWord(text: word, definition: def, example: "")
+        treeService.awardStudyProgress()
+        wordStorage.addLogEntry("Added word from photo: \(word)")
+        withAnimation { showingSuccessMessage = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation { self.showingSuccessMessage = false }
         }
     }
 
@@ -329,6 +294,13 @@ struct PhotoVocabView: View {
     }
 }
 
+struct PhotoVocabView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationView { PhotoVocabView() }
+            .preferredColorScheme(.light)
+    }
+}
+
 
 // MARK: - Mail View
 
@@ -421,8 +393,8 @@ class CameraViewController: UIViewController {
     weak var delegate: CameraViewControllerDelegate?
 
     private let captureSession = AVCaptureSession()
-    private var previewLayer: AVCaptureVideoPreviewLayer!
-    private var captureDevice: AVCaptureDevice?
+    private var previewLayer: AVCaptureVideoPreviewLayer! 
+    private var captureDevice: AVCaptureDevice? 
     private let photoOutput = AVCapturePhotoOutput()
 
     private lazy var captureButton: UIButton = {

@@ -7,6 +7,22 @@ struct ContentView: View {
     @State private var isEditing = false
     @State private var selection = Set<UUID>()
     @State private var showingDeleteConfirmation = false
+    @Binding var searchText: String
+
+    init(searchText: Binding<String> = .constant("")) {
+        self._searchText = searchText
+    }
+
+    var filteredWords: [Word] {
+        if searchText.isEmpty {
+            return wordStorage.words
+        } else {
+            return wordStorage.words.filter { word in
+                word.text.localizedCaseInsensitiveContains(searchText) ||
+                word.definition.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+    }
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -14,8 +30,8 @@ struct ContentView: View {
                 EmptyStateView()
             } else {
                 List(selection: $selection) {
-                    ForEach($wordStorage.words) { $word in
-                        NavigationLink(destination: WordDetailView(word: $word)) {
+                    ForEach(filteredWords) { word in
+                        NavigationLink(destination: WordDetailView(word: .constant(word))) {
                             WordRowView(word: word)
                         }
                     }
@@ -70,7 +86,10 @@ struct ContentView: View {
     }
 
     private func deleteWords(at offsets: IndexSet) {
-        wordStorage.words.remove(atOffsets: offsets)
+        let wordsToDelete = offsets.map { filteredWords[$0] }
+        wordStorage.words.removeAll { word in
+            wordsToDelete.contains(where: { $0.id == word.id })
+        }
     }
 
     private func deleteSelectedWords() {
@@ -82,16 +101,14 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        // Preview with words
-        ContentView()
-            .environmentObject(WordStorage())
-
-        // Preview with empty state
         let emptyStorage = WordStorage()
         emptyStorage.words = []
-        return ContentView()
-            .environmentObject(emptyStorage)
-            .previewDisplayName("Empty State")
-
+        return Group {
+            ContentView()
+                .environmentObject(WordStorage())
+            ContentView()
+                .environmentObject(emptyStorage)
+                .previewDisplayName("Empty State")
+        }
     }
 }

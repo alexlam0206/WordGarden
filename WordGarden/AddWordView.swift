@@ -2,10 +2,12 @@ import SwiftUI
 
 struct AddWordView: View {
     @ObservedObject var wordStorage: WordStorage
+    @EnvironmentObject var treeService: TreeService
     @Environment(\.presentationMode) var presentationMode
     @State private var text = ""
     @State private var definition = ""
     @State private var example = ""
+    @State private var dictionaryNoteVisible = false
     
     var word: String?
     var initialDefinition: String?
@@ -24,6 +26,7 @@ struct AddWordView: View {
                 // Ensure the word is not just whitespace.
                 if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     wordStorage.addWord(text: text, definition: definition, example: example)
+                    treeService.awardStudyProgress()
                     wordStorage.addLogEntry("Added word: \(text)")
                     presentationMode.wrappedValue.dismiss()
                 }
@@ -36,6 +39,30 @@ struct AddWordView: View {
             if let definition = initialDefinition {
                 self.definition = definition
             }
+            let lookupKey = !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? text : (word ?? "")
+            if let def = wordStorage.lookupDefinition(for: lookupKey), definition.isEmpty {
+                definition = def
+                dictionaryNoteVisible = true
+            }
         }
+        .overlay(
+            VStack {
+                if dictionaryNoteVisible {
+                    Text("Definition sourced from local example dictionary (offline). You can edit it.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.bottom, 8)
+                }
+            }, alignment: .bottom
+        )
+    }
+}
+
+struct AddWordView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationView {
+            AddWordView(wordStorage: WordStorage())
+        }
+        .preferredColorScheme(.light)
     }
 }
