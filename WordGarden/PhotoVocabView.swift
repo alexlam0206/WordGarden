@@ -25,139 +25,105 @@ struct PhotoVocabView: View {
     @State private var showingMailAlert = false
     @State private var mailError: String?
 
+    var body: some View {
         ScrollView {
-            VStack(spacing: 18) {
-                ZStack(alignment: .topTrailing) {
-                    Group {
-                        if let image = (showOriginalImage ? inputImage : isolatedSubjectImage) ?? inputImage ?? isolatedSubjectImage {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                        } else {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .overlay(Text("Take a photo to identify an object").foregroundColor(.secondary))
-                        }
-                    }
-                    .frame(height: 320)
-                    .clipped()
-                    .cornerRadius(12)
-                    .shadow(radius: 6)
+            VStack(spacing: 24) {
+                if let image = isolatedSubjectImage ?? inputImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 300)
+                        .cornerRadius(12)
+                        .shadow(radius: 5)
+                        .opacity(showOriginalImage ? (isolatedSubjectImage == nil ? 1 : 0.5) : 1)
+                } else {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .frame(height: 300)
 
-                    HStack(spacing: 10) {
-                        // Toggle between original and isolated when available
-                        if isolatedSubjectImage != nil {
-                            Button(action: { withAnimation { showOriginalImage.toggle() } }) {
-                                Image(systemName: showOriginalImage ? "photo" : "person.crop.circle")
-                                    .padding(8)
-                                    .background(Color.black.opacity(0.45))
-                                    .foregroundColor(.white)
-                                    .clipShape(Circle())
-                            }
-                            .accessibilityLabel(showOriginalImage ? "Show original" : "Show isolated")
-                        }
-
-                        Button(action: { reportIncorrectWord() }) {
-                            Image(systemName: "exclamationmark.bubble")
-                                .padding(8)
-                                .background(Color.black.opacity(0.45))
-                                .foregroundColor(.white)
-                                .clipShape(Circle())
-                        }
-                        .accessibilityLabel("Report incorrect detection")
+                        Text("Take a photo to identify an object")
+                            .foregroundColor(.secondary)
                     }
-                    .padding(12)
                 }
 
                 if isLoading {
-                    HStack(spacing: 12) {
+                    VStack(spacing: 10) {
                         ProgressView()
-                        Text("Identifying...")
+                            .scaleEffect(1.2)
+                        Text("Identifying object...")
+                            .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    .padding(.vertical, 8)
+                    .frame(height: 80)
                 }
 
                 if let word = identifiedWord {
-                    VStack(spacing: 12) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(word.capitalized)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
+                    VStack(spacing: 16) {
+                        Text("Identified Word:")
+                            .font(.headline)
+                        Text(word.capitalized)
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
 
-                                if let def = wordStorage.lookupDefinition(for: word) {
-                                    Text(def)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                        .lineLimit(3)
-                                }
-                            }
-
-                            Spacer()
+                        VStack(spacing: 16) {
+                        Button("Add to WordGarden") {
+                            addWordToGarden()
                         }
-                        .padding()
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
-                        .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 2)
+                        .buttonStyle(.borderedProminent)
+                        .frame(maxWidth: .infinity)
+                        .controlSize(.large)
 
-                        HStack(spacing: 12) {
-                            Button(action: addWordToGarden) {
-                                HStack { Image(systemName: "leaf.fill"); Text("Add") }
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.borderedProminen)
-
-                            Button(action: reportIncorrectWord) {
-                                HStack { Image(systemName: "flag"); Text("Report") }
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.orange)
+                        Button("Report Incorrect") {
+                            reportIncorrectWord()
                         }
+                        .buttonStyle(.bordered)
+                        .tint(.orange)
+                        .frame(maxWidth: .infinity)
+                        .controlSize(.large)
+                    }
+                        .padding(.top, 8)
                         .padding(.horizontal)
 
-                        if showingSuccessMessage {
                             HStack {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
-                                Text("Added to your garden")
+                                Text("Word added to your garden!")
                                     .fontWeight(.medium)
                             }
-                            .padding(10)
+                            .font(.subheadline)
+                            .foregroundColor(.green)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .background(Color.green.opacity(0.1))
+                            .cornerRadius(8)
                             .frame(maxWidth: .infinity)
-                            .background(Color.green.opacity(0.12))
-                            .cornerRadius(10)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                            .padding(.horizontal)
+                            .padding(.top, 8)
+                            .transition(.scale.combined(with: .opacity)) // Corrected: .scale.combined(with: .opacity)
                         }
                     }
-                    .padding(.horizontal, 2)
-                }
+            }
 
                 if let error = errorMessage {
                     Text(error)
                         .foregroundColor(.red)
-                        .padding(.top, 8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
                 }
 
-                Spacer(minLength: 12)
+                Spacer()
 
-                Button(action: { self.showingCustomCamera = true }) {
-                    HStack {
-                        Image(systemName: "camera.fill")
-                        Text("Take Photo")
-                    }
-                    .font(.headline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
+                Button(action: {
+                self.showingCustomCamera = true
+            }) {
+                HStack {
+                    Image(systemName: "camera.fill")
+                    Text("Take Photo")
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.blue)
-            }
-            .padding()
-        }
+                .font(.headline)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .foregroundColor(.white)
                 .cornerRadius(10)
             }
         }
@@ -203,7 +169,7 @@ struct PhotoVocabView: View {
         if MFMailComposeViewController.canSendMail() {
             self.showingMailView = true
         } else {
-            self.mailError = "Please set up an account in the Mail appto submit the report."
+            self.mailError = "Your device is not configured to send email. Please set up an account in the Mail app."
             self.showingMailAlert = true
         }
     }
@@ -245,7 +211,7 @@ struct PhotoVocabView: View {
         isLoading = false
     }
 
-    // Core ML Object Detection
+    // MARK: - Core ML Object Detection
 
     private func detect(image: UIImage) async {
         guard let ciImage = CIImage(image: image) else {
